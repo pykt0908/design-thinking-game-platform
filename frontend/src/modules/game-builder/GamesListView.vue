@@ -100,6 +100,17 @@
             >
               แก้ไข
             </v-btn>
+
+            <v-btn
+              icon="mdi-trash-can-outline"
+              color="error"
+              variant="text"
+              size="small"
+              rounded="lg"
+              class="delete-game-btn"
+              title="ลบเกม"
+              @click.stop="handleDeleteGame(g)"
+            ></v-btn>
           </div>
         </v-card>
       </div>
@@ -127,18 +138,48 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import apiClient from '@/api/client'
+import { useAlertStore } from '@/stores/alert'
 import type { Game } from '@/types'
 
+const alertStore = useAlertStore()
 const games = ref<Game[]>([])
 const loading = ref(true)
 
-onMounted(async () => {
+async function fetchGames() {
+  loading.value = true
   try {
     const { data } = await apiClient.get('/games')
     games.value = data.data || data
   } finally {
     loading.value = false
   }
+}
+
+async function handleDeleteGame(game: Game) {
+  const confirmed = await alertStore.confirm(
+    `คุณต้องการลบเกม "${game.title}" (รหัส: ${game.public_id}) ใช่หรือไม่? ข้อมูลการเล่นทั้งหมดของเกมนี้จะถูกลบและไม่สามารถกู้คืนได้`,
+    'ยืนยันการลบเกม',
+    {
+      confirmText: 'ลบเกมทันที',
+      cancelText: 'ยกเลิก',
+      type: 'error',
+    }
+  )
+
+  if (!confirmed) return
+
+  try {
+    await apiClient.delete(`/games/${game.id}`)
+    games.value = games.value.filter((g) => g.id !== game.id)
+    alertStore.success('ลบเกมเรียบร้อยแล้ว')
+  } catch (err: any) {
+    console.error('Failed to delete game', err)
+    alertStore.error(err.response?.data?.message || 'ไม่สามารถลบเกมได้')
+  }
+}
+
+onMounted(() => {
+  fetchGames()
 })
 </script>
 

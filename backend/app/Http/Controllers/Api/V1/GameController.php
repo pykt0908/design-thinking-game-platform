@@ -199,4 +199,27 @@ class GameController extends Controller
             'schema' => $schema,
         ]);
     }
+
+    /**
+     * Delete a game
+     */
+    public function destroy(Request $request, int $id): JsonResponse
+    {
+        $game = Game::findOrFail($id);
+        if (!$request->user()->isAdmin() && $game->teacher_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($game) {
+            \App\Models\GameSession::where('game_id', $game->id)->delete();
+            \App\Models\GameAssignment::where('game_id', $game->id)->delete();
+            $game->update(['current_version_id' => null]);
+            \App\Models\GameVersion::where('game_id', $game->id)->delete();
+            $game->delete();
+        });
+
+        return response()->json([
+            'message' => 'ลบเกมเรียบร้อยแล้ว (Game Deleted)',
+        ]);
+    }
 }

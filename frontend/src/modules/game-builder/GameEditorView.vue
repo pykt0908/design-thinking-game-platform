@@ -93,6 +93,18 @@
         >
           เผยแพร่เกม (Publish)
         </v-btn>
+
+        <v-divider vertical class="mx-1 my-1"></v-divider>
+
+        <v-btn
+          icon="mdi-trash-can-outline"
+          color="error"
+          variant="text"
+          size="small"
+          rounded="lg"
+          title="ลบเกมนี้"
+          @click="deleteCurrentGame"
+        ></v-btn>
       </div>
     </header>
 
@@ -423,12 +435,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useGameBuilderStore } from '@/stores/gameBuilder'
 import { useAlertStore } from '@/stores/alert'
+import apiClient from '@/api/client'
 import type { GameElement } from '@/types'
 
 const route = useRoute()
+const router = useRouter()
 const gameBuilderStore = useGameBuilderStore()
 const alertStore = useAlertStore()
 const showPreviewModal = ref(false)
@@ -522,6 +536,32 @@ function openPreview() {
 async function publishGame() {
   await gameBuilderStore.saveGame(true)
   alertStore.success('เผยแพร่เกมเรียบร้อยแล้ว! นักเรียนสามารถเข้าเล่นผ่านรหัส ' + (gameBuilderStore.game?.public_id || ''), 'เผยแพร่เกมสำเร็จ')
+}
+
+async function deleteCurrentGame() {
+  const g = gameBuilderStore.game
+  if (!g) return
+
+  const confirmed = await alertStore.confirm(
+    `คุณต้องการลบเกม "${g.title}" (รหัส: ${g.public_id}) ใช่หรือไม่? ข้อมูลทั้งหมดจะถูกลบและไม่สามารถกู้คืนได้`,
+    'ยืนยันการลบเกม',
+    {
+      confirmText: 'ลบเกมทันที',
+      cancelText: 'ยกเลิก',
+      type: 'error',
+    }
+  )
+
+  if (!confirmed) return
+
+  try {
+    await apiClient.delete(`/games/${g.id}`)
+    alertStore.success('ลบเกมเรียบร้อยแล้ว')
+    router.push('/games')
+  } catch (err: any) {
+    console.error('Failed to delete game', err)
+    alertStore.error(err.response?.data?.message || 'ไม่สามารถลบเกมได้')
+  }
 }
 
 onMounted(async () => {
