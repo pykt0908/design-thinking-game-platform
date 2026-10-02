@@ -135,7 +135,7 @@
       <template #append>
         <div class="pa-4 border-t">
           <div class="d-flex align-center">
-            <v-avatar size="32" class="mr-2" color="indigo-lighten-5">
+            <v-avatar size="32" class="mr-2" color="purple-lighten-5">
               <v-icon icon="mdi-shield-check" color="primary" size="18"></v-icon>
             </v-avatar>
             <div class="text-truncate">

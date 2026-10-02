@@ -54,7 +54,7 @@
           <h2 class="text-h4 font-weight-bold text-slate-800 mb-1">ภารกิจสำเร็จ!</h2>
           <p class="text-body-2 text-grey mb-6">คุณได้ทำแบบทดสอบและเรียนรู้ผ่านเกมเรียบร้อยแล้ว</p>
 
-          <div class="score-badge pa-6 rounded-2xl mb-6 bg-indigo-lighten-5">
+          <div class="score-badge pa-6 rounded-2xl mb-6 bg-purple-lighten-5">
             <div class="text-h2 font-weight-bold text-primary mb-1">
               {{ currentScore }}
             </div>
@@ -110,7 +110,7 @@
             <!-- 1. Dialogue / NPC Element -->
             <div v-if="el.type === 'character'" class="dialogue-box w-100 pa-6 rounded-2xl bg-white elevation-3 border-card">
               <div class="d-flex align-center mb-4">
-                <v-avatar size="60" class="mr-4 elevation-2 bg-indigo-lighten-5">
+                <v-avatar size="60" class="mr-4 elevation-2 bg-purple-lighten-5">
                   <v-img :src="el.avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=Teacher'"></v-img>
                 </v-avatar>
                 <div>
@@ -439,8 +439,8 @@ onUnmounted(() => {
   border: 1.5px solid #e2e8f0;
 }
 .hover-opt:hover {
-  border-color: #6366f1;
-  background-color: #f5f3ff;
+  border-color: #c670ff;
+  background-color: #faf4fe;
 }
 .gap-3 { gap: 12px; }
 .max-w-xl { max-width: 620px; }

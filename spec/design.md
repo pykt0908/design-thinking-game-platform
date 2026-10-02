@@ -72,54 +72,86 @@ Material Design 3
 
 # 4. Color System
 
+Palette กำหนดตาม Brand Color Token:
+
+```text
+[
+  "#3D0066", // Primary Deep Violet
+  "#C670FF", // Secondary Vibrant Orchid
+  "#EEC7FC", // Soft Lilac Tint / Surface Variant
+  "#FFE047", // Accent Joyful Lemon
+  "#FFCE1F"  // Warning / Amber Gold
+]
+```
+
 Primary:
 
 ```text
-#6366F1
+#3D0066
 ```
 
-Indigo ใช้กับ
+Deep Royal Violet ใช้กับ
 
 - Primary Button
 - Navigation Active
 - Main Actions
-- Links
+- Brand Headers & Strong Emphasis Links
 
 Secondary:
 
 ```text
-#8B5CF6
+#C670FF
 ```
 
-ใช้กับ
+Vibrant Orchid Purple ใช้กับ
 
-- AI
+- AI Features
 - Creative Features
-- Gradient
-- Game Builder
+- Gradient Accent
+- Interactive Highlights
+- Game Builder Selection Outline
+
+Surface Tint / Light Variant:
+
+```text
+#EEC7FC
+```
+
+Soft Lilac Pastel ใช้กับ
+
+- Surface Variant
+- AI Drawer / Recommendation Card Tint
+- Subtitle Chip Background
+- Subtle Card Highlights & Borders
 
 Accent:
 
 ```text
-#06B6D4
+#FFE047
 ```
 
-ใช้กับ
+Bright Lemon Yellow ใช้กับ
 
-- Progress
-- Interactive Elements
-- Analytics
+- Progress & XP Badges
+- Interactive Highlight Elements
+- Gamification Callouts
+
+Warning / Amber Gold:
+
+```text
+#FFCE1F
+```
+
+Warm Amber Gold ใช้กับ
+
+- Stars & Trophies
+- Points & Score Multipliers
+- Warnings & Notice Badges
 
 Success:
 
 ```text
 #22C55E
-```
-
-Warning:
-
-```text
-#F59E0B
 ```
 
 Error:
@@ -131,7 +163,7 @@ Error:
 Background:
 
 ```text
-#F8FAFC
+#FAF7FD
 ```
 
 Surface:
@@ -143,19 +175,19 @@ Surface:
 Main Text:
 
 ```text
-#0F172A
+#1F0B33
 ```
 
 Secondary Text:
 
 ```text
-#64748B
+#6B5B7B
 ```
 
 Border:
 
 ```text
-#E2E8F0
+#EDD4F8
 ```
 
 ---
@@ -165,8 +197,10 @@ Border:
 AI Feature สามารถใช้ Gradient
 
 ```text
-#6366F1 → #8B5CF6
+#3D0066 → #C670FF
 ```
+
+(สามารถเน้นด้วย Accent `#FFE047`)
 
 ใช้เฉพาะ
 

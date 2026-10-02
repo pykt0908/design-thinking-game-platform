@@ -115,7 +115,7 @@
 
         <!-- AI Improvement Recommendations per spec Section 35 -->
         <v-col cols="12" md="5">
-          <v-card class="pa-5 border-card rounded-xl mb-6 bg-indigo-lighten-5">
+          <v-card class="pa-5 border-card rounded-xl mb-6 bg-purple-lighten-5">
             <div class="font-weight-bold text-subtitle-1 text-primary mb-3 d-flex align-center">
               <v-avatar size="28" class="ai-gradient-bg mr-2">
                 <v-icon icon="mdi-creation" color="white" size="16"></v-icon>

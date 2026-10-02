@@ -75,7 +75,7 @@
     </v-row>
 
     <div v-else class="text-center pa-12 border-card rounded-xl bg-white">
-      <v-avatar size="64" color="indigo-lighten-5" class="mb-4">
+      <v-avatar size="64" color="purple-lighten-5" class="mb-4">
         <v-icon icon="mdi-gamepad-variant-outline" color="primary" size="36"></v-icon>
       </v-avatar>
       <h3 class="text-h6 font-weight-bold text-slate-800 mb-1">ยังไม่มีเกม</h3>

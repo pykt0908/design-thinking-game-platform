@@ -112,7 +112,7 @@
           <!-- Step 1: Empathize -->
           <div v-if="currentStepIndex === 0">
             <div class="d-flex align-center mb-4">
-              <v-avatar color="indigo-lighten-5" class="mr-3" size="44">
+              <v-avatar color="purple-lighten-5" class="mr-3" size="44">
                 <v-icon icon="mdi-heart" color="primary" size="24"></v-icon>
               </v-avatar>
               <div>
@@ -460,7 +460,7 @@
       </div>
 
       <div v-else-if="aiSuggestion">
-        <v-card class="pa-4 border-card rounded-xl mb-4 bg-indigo-lighten-5">
+        <v-card class="pa-4 border-card rounded-xl mb-4 bg-purple-lighten-5">
           <div class="font-weight-bold text-subtitle-2 text-primary mb-2">
             {{ aiSuggestion.title }}
           </div>

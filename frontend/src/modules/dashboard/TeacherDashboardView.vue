@@ -53,7 +53,7 @@
         <v-card class="pa-4 border-card rounded-xl">
           <div class="d-flex justify-space-between align-center mb-2">
             <span class="text-caption font-weight-bold text-grey">เกมทั้งหมด</span>
-            <v-avatar size="36" color="indigo-lighten-5">
+            <v-avatar size="36" color="purple-lighten-5">
               <v-icon icon="mdi-gamepad-variant" color="primary" size="20"></v-icon>
             </v-avatar>
           </div>
@@ -141,7 +141,7 @@
               class="border rounded-lg mb-3 pa-3"
             >
               <template #prepend>
-                <v-avatar color="indigo-lighten-5" rounded="lg" class="mr-3">
+                <v-avatar color="purple-lighten-5" rounded="lg" class="mr-3">
                   <v-icon icon="mdi-lightbulb-on" color="primary"></v-icon>
                 </v-avatar>
               </template>

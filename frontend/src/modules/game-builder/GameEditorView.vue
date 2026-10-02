@@ -582,7 +582,7 @@ onMounted(async () => {
   backdrop-filter: blur(8px);
 }
 .element-selected {
-  outline: 2px solid #6366f1;
+  outline: 2px solid #c670ff;
   border-radius: 12px;
 }
 .gap-1 { gap: 4px; }

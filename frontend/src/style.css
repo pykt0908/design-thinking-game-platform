@@ -1,11 +1,13 @@
 :root {
-  --primary-color: #6366f1;
-  --secondary-color: #8b5cf6;
-  --accent-color: #06b6d4;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --bg-color: #f8fafc;
+  --primary-color: #3d0066;
+  --secondary-color: #c670ff;
+  --surface-variant: #eec7fc;
+  --accent-color: #ffe047;
+  --gold-color: #ffce1f;
+  --text-main: #1f0b33;
+  --text-muted: #6b5b7b;
+  --border-color: #edd4f8;
+  --bg-color: #faf7fd;
 }
 
 * {
@@ -29,12 +31,12 @@ body {
 
 /* AI Gradient */
 .ai-gradient-bg {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  background: linear-gradient(135deg, #3d0066 0%, #c670ff 100%) !important;
   color: #ffffff !important;
 }
 
 .ai-gradient-text {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #3d0066 0%, #c670ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -42,7 +44,7 @@ body {
 .ai-glow-border {
   border: 1.5px solid transparent;
   background: linear-gradient(#fff, #fff) padding-box,
-              linear-gradient(135deg, #6366f1, #8b5cf6) border-box;
+              linear-gradient(135deg, #c670ff, #ffe047) border-box;
 }
 
 /* Clean scrollbar */
