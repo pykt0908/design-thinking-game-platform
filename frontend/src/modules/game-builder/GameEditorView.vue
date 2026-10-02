@@ -15,8 +15,10 @@
               {{ gameBuilderStore.game?.status === 'published' ? 'เผยแพร่แล้ว (v' + (gameBuilderStore.game?.current_version?.version_number || '1.0') + ')' : 'ฉบับร่าง (Draft)' }}
             </v-chip>
           </div>
-          <div class="text-caption text-grey">
-            ID: {{ gameBuilderStore.game?.public_id }}
+          <div class="text-caption text-grey d-flex align-center gap-2">
+            <span>ID: {{ gameBuilderStore.game?.public_id }}</span>
+            <span>&bull;</span>
+            <span class="font-weight-bold text-primary">🛠️ Studio Editor (หน้าจอแก้ไขเกม)</span>
           </div>
         </div>
       </div>

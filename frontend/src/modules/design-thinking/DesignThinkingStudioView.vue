@@ -1325,7 +1325,58 @@
           </div>
         </div>
 
-        <div class="d-flex justify-end gap-2">
+        <!-- Success Actions when Generation Complete -->
+        <div v-if="isGenComplete && generatedGame" class="animate-fade-in">
+          <v-sheet color="green-lighten-5" rounded="xl" class="pa-4 border-card mb-4 text-center">
+            <v-icon icon="mdi-check-decagram" color="success" size="48" class="mb-2"></v-icon>
+            <h3 class="text-subtitle-1 font-weight-bold text-slate-900 mb-1">
+              สร้างเกม "{{ generatedGame.title }}" สำเร็จแล้ว!
+            </h3>
+            <div class="text-caption text-grey-darken-1 mb-2">
+              รหัสเกม: <strong class="text-primary">{{ generatedGame.public_id }}</strong>
+            </div>
+            <p class="text-caption text-slate-600 mb-0">
+              เกมถูกบันทึกเข้าสู่ระบบเรียบร้อยแล้ว คุณครูต้องการทำรายการใดต่อไป?
+            </p>
+          </v-sheet>
+
+          <div class="d-flex flex-column gap-2 mb-2">
+            <v-btn
+              :to="`/play/${generatedGame.public_id}?preview=true`"
+              target="_blank"
+              class="ai-gradient-bg text-white font-weight-bold py-3 elevation-2"
+              size="large"
+              rounded="xl"
+              prepend-icon="mdi-play-circle"
+            >
+              🎮 ทดลองเล่นเกมทันที (Play Game)
+            </v-btn>
+
+            <v-btn
+              :to="`/games/${generatedGame.id}/edit`"
+              color="primary"
+              variant="tonal"
+              size="large"
+              rounded="xl"
+              class="font-weight-bold"
+              prepend-icon="mdi-pencil-ruler"
+            >
+              🛠️ เข้าหน้าปรับแต่งและแก้ไขเกม (Edit in Studio)
+            </v-btn>
+
+            <v-btn
+              to="/games"
+              variant="text"
+              color="grey-darken-2"
+              rounded="xl"
+              class="font-weight-medium"
+            >
+              ดูคลังเกมทั้งหมด
+            </v-btn>
+          </div>
+        </div>
+
+        <div v-if="!isGenComplete" class="d-flex justify-end gap-2">
           <v-btn
             v-if="!isGenerating"
             variant="text"
@@ -1394,13 +1445,15 @@ const aiSuggestion = ref<any>(null)
 // Generation Modal
 const showGenerateModal = ref(false)
 const isGenerating = ref(false)
+const isGenComplete = ref(false)
+const generatedGame = ref<any>(null)
 const genProgress = ref(0)
 const genSteps = [
   'วิเคราะห์ข้อมูลผู้เรียนและบริบท',
   'กำหนดวัตถุประสงค์และ Problem Statement',
   'ออกแบบ Missions และคำถามการเรียนรู้',
   'เลือก Assets และสร้าง Game Schema v1.0',
-  'ตรวจสอบ Schema และเตรียม Game Editor',
+  'ตรวจสอบ Schema และเตรียม Game Engine',
 ]
 
 // Step completion calculation
@@ -1574,6 +1627,7 @@ async function openAiAssistant() {
 // Start Game Generation
 async function startGeneration() {
   isGenerating.value = true
+  isGenComplete.value = false
   genProgress.value = 15
 
   const interval = setInterval(() => {
@@ -1588,9 +1642,10 @@ async function startGeneration() {
     genProgress.value = 100
 
     setTimeout(() => {
-      showGenerateModal.value = false
-      router.push(`/games/${data.game.id}/edit`)
-    }, 600)
+      isGenerating.value = false
+      isGenComplete.value = true
+      generatedGame.value = data.game
+    }, 400)
   } catch (err: any) {
     clearInterval(interval)
     isGenerating.value = false
