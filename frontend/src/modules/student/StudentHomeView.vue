@@ -1,14 +1,18 @@
 <template>
   <div class="max-w-5xl mx-auto">
     <!-- Hero Greeting per spec Section 29 -->
-    <v-card class="pa-8 border-card rounded-2xl mb-6 bg-white overflow-hidden">
+    <v-card class="pa-6 pa-md-8 border-card rounded-2xl mb-6 hero-gradient-card overflow-hidden elevation-1">
       <v-row align="center">
         <v-col cols="12" md="8">
-          <h1 class="text-h4 font-weight-bold text-slate-800 mb-2 d-flex align-center">
+          <div class="d-inline-flex align-center px-3 py-1 rounded-pill bg-purple-lighten-5 text-primary text-caption font-weight-bold mb-3 border">
+            <v-icon icon="mdi-trophy-variant" size="14" color="amber-darken-2" class="mr-1"></v-icon>
+            ศูนย์รวมภารกิจผจญภัย &bull; Level Up Your Skills
+          </div>
+          <h1 class="text-h4 font-weight-bold text-slate-900 mb-2 d-flex align-center">
             สวัสดี, {{ authStore.user?.name }}
           </h1>
-          <p class="text-body-1 text-grey mb-6">
-            พร้อมสำหรับภารกิจการเรียนรู้วันนี้หรือยัง? เล่นเกมเพื่อสะสมคะแนนและเหรียญรางวัล!
+          <p class="text-body-1 text-slate-700 mb-6">
+            พร้อมสำหรับภารกิจการเรียนรู้วันนี้หรือยัง? เล่นเกมเพื่อพิชิตคะแนนและสะสมเหรียญรางวัลพิเศษ!
           </p>
 
           <!-- Join Classroom with Code per spec Section 7 -->
@@ -17,23 +21,32 @@
               v-model="joinCodeInput"
               label="กรอกรหัสห้องเรียน (Join Code)"
               placeholder="เช่น DTG-SCI01"
-              density="compact"
+              density="comfortable"
               hide-details
               rounded="lg"
+              class="bg-white"
             ></v-text-field>
             <v-btn
               color="primary"
               rounded="lg"
-              class="font-weight-bold px-4"
+              class="font-weight-bold px-5"
+              size="large"
               :loading="joining"
               @click="handleJoinClassroom"
             >
-              เข้าร่วม
+              เข้าร่วมห้องเรียน
             </v-btn>
           </div>
         </v-col>
-        <v-col cols="12" md="4" class="text-right d-none d-md-block">
-          <v-icon icon="mdi-gamepad-variant" size="140" color="purple-lighten-4" class="opacity-40"></v-icon>
+        <v-col cols="12" md="4" class="text-center d-none d-md-block">
+          <div class="d-inline-block position-relative">
+            <img
+              src="@/assets/images/student_quest_hero.jpg"
+              alt="Student Quest Champion"
+              class="floating-asset rounded-2xl elevation-6"
+              style="width: 175px; height: 175px; object-fit: cover; border: 3px solid rgba(255, 206, 31, 0.5);"
+            />
+          </div>
         </v-col>
       </v-row>
     </v-card>

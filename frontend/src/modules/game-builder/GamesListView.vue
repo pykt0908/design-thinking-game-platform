@@ -74,13 +74,20 @@
       </v-col>
     </v-row>
 
-    <div v-else class="text-center pa-12 border-card rounded-xl bg-white">
-      <v-avatar size="64" color="purple-lighten-5" class="mb-4">
-        <v-icon icon="mdi-gamepad-variant-outline" color="primary" size="36"></v-icon>
-      </v-avatar>
-      <h3 class="text-h6 font-weight-bold text-slate-800 mb-1">ยังไม่มีเกม</h3>
-      <p class="text-body-2 text-grey mb-4">สร้างเกมได้ง่ายๆ ผ่านกระบวนการ Design Thinking 5 ขั้นตอน</p>
-      <v-btn to="/projects/new" color="primary" rounded="lg">+ สร้างโปรเจกต์ใหม่</v-btn>
+    <div v-else class="text-center pa-12 border-card rounded-2xl hero-gradient-card">
+      <div class="mb-4">
+        <img
+          src="@/assets/images/ai_game_wizard.jpg"
+          alt="Game Library"
+          class="floating-asset rounded-2xl elevation-4"
+          style="width: 140px; height: 140px; object-fit: cover; border: 3px solid rgba(198, 112, 255, 0.4);"
+        />
+      </div>
+      <h3 class="text-h6 font-weight-bold text-slate-800 mb-1">ยังไม่มีเกมในคลังของคุณ</h3>
+      <p class="text-body-2 text-grey mb-5">สร้างเกมได้ง่ายๆ ผ่านกระบวนการ Design Thinking 5 ขั้นตอน หรือปล่อยให้ AI ช่วยสร้างเกมอัตโนมัติ</p>
+      <v-btn to="/projects/new" color="primary" rounded="lg" size="large" class="font-weight-bold elevation-2">
+        + สร้างโปรเจกต์เพื่อสร้างเกม
+      </v-btn>
     </div>
   </div>
 </template>

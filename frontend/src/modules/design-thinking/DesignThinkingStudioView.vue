@@ -495,11 +495,16 @@
     <v-dialog v-model="showGenerateModal" max-width="520" persistent>
       <v-card class="pa-6 rounded-xl">
         <div class="text-center mb-4">
-          <v-avatar size="64" class="ai-gradient-bg mb-3 elevation-2">
-            <v-icon icon="mdi-creation" color="white" size="36"></v-icon>
-          </v-avatar>
+          <div class="d-inline-block position-relative mb-2">
+            <img
+              src="@/assets/images/ai_game_wizard.jpg"
+              alt="AI Engine Artwork"
+              class="floating-asset rounded-2xl elevation-4"
+              style="width: 100px; height: 100px; object-fit: cover; border: 2px solid rgba(198, 112, 255, 0.4);"
+            />
+          </div>
           <h2 class="text-h5 font-weight-bold text-slate-800">
-            {{ isGenerating ? 'กำลังสร้างเกมของคุณ' : 'พร้อมสร้างเกมการเรียนรู้' }}
+            {{ isGenerating ? 'กำลังสร้างเกมของคุณด้วย AI' : 'พร้อมสร้างเกมการเรียนรู้' }}
           </h2>
           <p class="text-caption text-grey mt-1">
             แปลงแนวคิดจากกระบวนการ Design Thinking สู่ Web Game อัตโนมัติ

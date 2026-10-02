@@ -1,16 +1,20 @@
 <template>
   <div>
     <!-- Hero Greeting per spec Section 12 -->
-    <v-card class="pa-6 mb-6 border-card rounded-xl bg-white overflow-hidden position-relative">
+    <v-card class="pa-6 pa-md-8 mb-6 border-card rounded-2xl hero-gradient-card overflow-hidden position-relative elevation-1">
       <v-row align="center">
         <v-col cols="12" md="8">
-          <div class="d-flex align-center mb-2">
-            <span class="text-h5 font-weight-bold text-slate-800">
-              สวัสดี, {{ authStore.user?.name }}
-            </span>
+          <div class="d-inline-flex align-center px-3 py-1 rounded-pill bg-purple-lighten-5 text-primary text-caption font-weight-bold mb-3 border">
+            <v-icon icon="mdi-sparkles" size="14" color="secondary" class="mr-1"></v-icon>
+            พื้นที่สร้างสรรค์เกมนวัตกรรมการศึกษา
           </div>
-          <p class="text-body-1 text-grey-darken-1 mb-4">
-            วันนี้อยากสร้างประสบการณ์การเรียนรู้อะไรใหม่ๆ ให้กับผู้เรียนของคุณ?
+          <div class="d-flex align-center mb-2">
+            <h1 class="text-h4 font-weight-bold text-slate-900">
+              สวัสดี, {{ authStore.user?.name }}
+            </h1>
+          </div>
+          <p class="text-body-1 text-slate-700 mb-6">
+            วันนี้อยากสร้างประสบการณ์การเรียนรู้อะไรใหม่ๆ ให้กับผู้เรียนของคุณ? เปลี่ยนไอเดียสู่เกมได้ในไม่กี่นาที
           </p>
           <div class="d-flex flex-wrap gap-3">
             <v-btn
@@ -18,15 +22,17 @@
               to="/projects/new"
               prepend-icon="mdi-plus"
               rounded="lg"
-              class="px-5 font-weight-medium"
+              class="px-5 font-weight-bold elevation-2"
+              size="large"
             >
               + สร้างโปรเจกต์ใหม่
             </v-btn>
             <v-btn
-              class="ai-gradient-bg text-white px-5 font-weight-medium"
+              class="ai-gradient-bg text-white px-5 font-weight-bold elevation-2"
               to="/projects"
               prepend-icon="mdi-creation"
               rounded="lg"
+              size="large"
             >
               สร้างเกมด้วย AI
             </v-btn>
@@ -35,14 +41,23 @@
               to="/classrooms"
               prepend-icon="mdi-google-classroom"
               rounded="lg"
-              color="grey-darken-3"
+              color="primary"
+              class="font-weight-medium"
+              size="large"
             >
               จัดการห้องเรียน
             </v-btn>
           </div>
         </v-col>
-        <v-col cols="12" md="4" class="text-right d-none d-md-block">
-          <v-icon icon="mdi-gamepad-circle" size="140" color="primary-lighten-4" class="opacity-50"></v-icon>
+        <v-col cols="12" md="4" class="text-center d-none d-md-block">
+          <div class="d-inline-block position-relative">
+            <img
+              src="@/assets/images/studio_hero.jpg"
+              alt="Design Thinking Studio"
+              class="floating-asset rounded-2xl elevation-6"
+              style="width: 170px; height: 170px; object-fit: cover; border: 3px solid rgba(198, 112, 255, 0.4);"
+            />
+          </div>
         </v-col>
       </v-row>
     </v-card>

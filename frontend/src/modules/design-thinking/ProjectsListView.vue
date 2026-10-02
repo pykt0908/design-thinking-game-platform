@@ -67,13 +67,20 @@
       </v-col>
     </v-row>
 
-    <div v-else class="text-center pa-12 border-card rounded-xl bg-white">
-      <v-avatar size="64" color="purple-lighten-5" class="mb-4">
-        <v-icon icon="mdi-lightbulb-outline" color="primary" size="36"></v-icon>
-      </v-avatar>
-      <h3 class="text-h6 font-weight-bold text-slate-800 mb-1">ยังไม่มีโปรเจกต์</h3>
-      <p class="text-body-2 text-grey mb-4">เริ่มสร้างโปรเจกต์ Design Thinking เพื่อเปลี่ยนเนื้อหาบทเรียนเป็นเกม</p>
-      <v-btn to="/projects/new" color="primary" rounded="lg">+ สร้างโปรเจกต์แรกของคุณ</v-btn>
+    <div v-else class="text-center pa-12 border-card rounded-2xl hero-gradient-card">
+      <div class="mb-4">
+        <img
+          src="@/assets/images/studio_hero.jpg"
+          alt="Create Project"
+          class="floating-asset rounded-2xl elevation-4"
+          style="width: 140px; height: 140px; object-fit: cover; border: 3px solid rgba(198, 112, 255, 0.4);"
+        />
+      </div>
+      <h3 class="text-h6 font-weight-bold text-slate-800 mb-1">ยังไม่มีโปรเจกต์การเรียนรู้</h3>
+      <p class="text-body-2 text-grey mb-5">เริ่มสร้างโปรเจกต์ Design Thinking เพื่อเปลี่ยนเนื้อหาบทเรียนเป็นเกมที่สนุกและได้ผลลัพธ์</p>
+      <v-btn to="/projects/new" color="primary" rounded="lg" size="large" class="font-weight-bold elevation-2">
+        + สร้างโปรเจกต์แรกของคุณ
+      </v-btn>
     </div>
   </div>
 </template>
