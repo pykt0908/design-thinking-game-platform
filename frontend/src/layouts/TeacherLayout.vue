@@ -95,9 +95,9 @@
         ></v-list-item>
 
         <v-list-item
-          to="/projects"
+          to="/games/new"
           prepend-icon="mdi-lightbulb-on-outline"
-          title="Design Projects"
+          title="Design Your Game"
           rounded="lg"
           class="sidebar-item"
         ></v-list-item>

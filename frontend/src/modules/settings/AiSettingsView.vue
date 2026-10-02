@@ -152,9 +152,11 @@
           v-model="apiKey"
           label="API Key *"
           type="password"
-          :placeholder="existingMaskedKey || 'กรอก API Key ใหม่ของคุณที่นี่'"
+          :placeholder="existingMaskedKey ? `คีย์เดิมที่บันทึกแล้ว (${existingMaskedKey}) - พิมพ์ใหม่หากต้องการเปลี่ยน` : 'กรอก API Key ของคุณที่นี่'"
           prepend-inner-icon="mdi-key-outline"
-          class="mb-1 mt-2"
+          class="mb-2 mt-2"
+          hint="หากมีคีย์บันทึกอยู่ในระบบแล้ว (ตามกล่องสีเขียวด้านล่าง) สามารถเว้นว่างไว้เพื่อใช้คีย์เดิม หรือพิมพ์คีย์ใหม่เพื่ออัปเดต"
+          persistent-hint
         >
           <template #append-inner>
             <v-tooltip text="เปิด Google AI Studio เพื่อสร้าง Project และรับ API Key" location="top">
@@ -181,8 +183,19 @@
           <span>ยังไม่มี Key? คลิก <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="font-weight-bold text-decoration-underline text-primary">สร้าง Project และรับ Key ฟรีที่ Google AI Studio</a></span>
         </div>
 
-        <div v-if="existingMaskedKey" class="text-caption text-grey mb-4">
-          คีย์ปัจจุบันที่ใช้งานอยู่: <code>{{ existingMaskedKey }}</code>
+        <div v-if="existingMaskedKey" class="d-flex align-center gap-3 mb-4 pa-3 rounded-lg border bg-green-lighten-5">
+          <v-icon icon="mdi-check-decagram" color="success" size="24"></v-icon>
+          <div class="flex-grow-1">
+            <div class="text-caption font-weight-bold text-slate-800">
+              สถานะ: บันทึกคีย์ {{ provider.toUpperCase() }} ในระบบแล้ว (<code>{{ existingMaskedKey }}</code>)
+            </div>
+            <div class="text-caption text-grey-darken-1">
+              ระบบเชื่อมต่อและจำคีย์นี้ไว้เรียบร้อยแล้ว พร้อมใช้งานสร้างเกมได้ทันที
+            </div>
+          </div>
+          <v-chip size="small" color="success" variant="flat" class="font-weight-bold">
+            <v-icon start icon="mdi-shield-check" size="14"></v-icon> มีคีย์ในระบบ
+          </v-chip>
         </div>
 
         <div class="d-flex justify-space-between align-center border-t pt-4">
@@ -219,37 +232,39 @@ import { useAlertStore } from '@/stores/alert'
 
 const alertStore = useAlertStore()
 const provider = ref('gemini')
-const model = ref('gemini-1.5-flash')
+const model = ref('gemini-flash-lite-latest')
 const baseUrl = ref('')
 const apiKey = ref('')
 const existingMaskedKey = ref('')
 const testing = ref(false)
 const saving = ref(false)
+const allCredentials = ref<any[]>([])
 
-// Curated model list per provider
+// Curated modern model list per provider (2026 updated)
 const modelPresets: Record<string, Array<{ title: string; value: string; desc: string }>> = {
   gemini: [
-    { title: 'gemini-1.5-flash (แนะนำ)', value: 'gemini-1.5-flash', desc: 'เร็วมาก คุ้มค่า เหมาะกับการออกแบบเกมแบบเรียลไทม์' },
-    { title: 'gemini-1.5-pro', value: 'gemini-1.5-pro', desc: 'ความฉลาดระดับสูง วิเคราะห์เนื้อหาและสรุปผลเชิงลึก' },
-    { title: 'gemini-2.0-flash-exp', value: 'gemini-2.0-flash-exp', desc: 'โมเดลรุ่นใหม่ล่าสุด ความเร็วและการคิดขั้นสูง' },
-    { title: 'gemini-1.0-pro', value: 'gemini-1.0-pro', desc: 'โมเดลรุ่นมาตรฐาน' },
+    { title: 'gemini-flash-lite-latest (แนะนำ - เร็วและเสถียรที่สุด)', value: 'gemini-flash-lite-latest', desc: 'ตอบสนองทันที ไม่ติดคิว เหมาะกับการสร้างเกมแบบเรียลไทม์' },
+    { title: 'gemini-3.5-flash (ฉลาดรอบด้าน)', value: 'gemini-3.5-flash', desc: 'โมเดลรุ่นใหม่ ความคิดสร้างสรรค์และตรรกะเกมขั้นสูง' },
+    { title: 'gemini-3.8-flash (โมเดลเรือธงล่าสุด)', value: 'gemini-3.8-flash', desc: 'โมเดลความเร็วสูงรุ่นล่าสุดสำหรับตรรกะซับซ้อน' },
+    { title: 'gemini-2.5-pro (การวิเคราะห์เชิงลึก)', value: 'gemini-2.5-pro', desc: 'โมเดลระดับโปรสำหรับงานวิเคราะห์และสรุปผลเชิงลึก' },
+    { title: 'gemini-flash-latest', value: 'gemini-flash-latest', desc: 'โมเดล Flash เวอร์ชั่นอัปเดตล่าสุด' },
   ],
   openai: [
-    { title: 'gpt-4o-mini (แนะนำ)', value: 'gpt-4o-mini', desc: 'เร็วและประหยัดต้นทุนสูง เหมาะกับงาน Generate ทั่วไป' },
+    { title: 'gpt-4o-mini (แนะนำ)', value: 'gpt-4o-mini', desc: 'เร็วและประหยัดต้นทุนสูง เหมาะกับงานสร้างเกมและเนื้อหาทั่วไป' },
     { title: 'gpt-4o', value: 'gpt-4o', desc: 'โมเดลเรือธง ความสามารถด้านตรรกะและการศึกษาครอบคลุม' },
-    { title: 'gpt-4-turbo', value: 'gpt-4-turbo', desc: 'โมเดลความจุบริบทสูง' },
-    { title: 'o1-mini', value: 'o1-mini', desc: 'เน้นการคิดเชิงตรรกะและการแก้ปัญหาเชิงซ้อน' },
+    { title: 'o3-mini', value: 'o3-mini', desc: 'เน้นการคิดเชิงตรรกะและแก้โจทย์โค้ดดิ้งขั้นสูง' },
+    { title: 'o1', value: 'o1', desc: 'โมเดลความสามารถการคิดวิเคราะห์เชิงลึกขั้นสุด' },
   ],
   anthropic: [
-    { title: 'claude-3-5-sonnet-20241022 (แนะนำ)', value: 'claude-3-5-sonnet-20241022', desc: 'ฉลาดรอบด้าน ให้ภาษาไทยสละสลวย เหมาะกับการศึกษา' },
-    { title: 'claude-3-5-haiku-20241022', value: 'claude-3-5-haiku-20241022', desc: 'ตอบสนองรวดเร็วและประหยัด' },
-    { title: 'claude-3-opus-20240229', value: 'claude-3-opus-20240229', desc: 'โมเดลประมวลผลขนาดใหญ่สำหรับงานเชิงลึก' },
+    { title: 'claude-3-5-sonnet-latest (แนะนำ)', value: 'claude-3-5-sonnet-latest', desc: 'ฉลาดรอบด้าน ให้ภาษาไทยสละสลวย โค้ดเกมแม่นยำ' },
+    { title: 'claude-3-5-haiku-latest', value: 'claude-3-5-haiku-latest', desc: 'ตอบสนองรวดเร็วและประหยัด' },
+    { title: 'claude-3-opus-latest', value: 'claude-3-opus-latest', desc: 'โมเดลประมวลผลขนาดใหญ่สำหรับงานเชิงลึก' },
   ],
   custom: [
     { title: 'deepseek-chat', value: 'deepseek-chat', desc: 'DeepSeek-V3 LLM API' },
+    { title: 'deepseek-reasoner', value: 'deepseek-reasoner', desc: 'DeepSeek-R1 ให้เหตุผลเชิงลึก' },
     { title: 'llama-3.3-70b-instruct', value: 'llama-3.3-70b-instruct', desc: 'Meta Llama 3.3 70B Open Weights' },
     { title: 'qwen-2.5-72b-instruct', value: 'qwen-2.5-72b-instruct', desc: 'Alibaba Qwen 2.5' },
-    { title: 'mistral-large-latest', value: 'mistral-large-latest', desc: 'Mistral Large' },
   ],
 }
 
@@ -257,22 +272,41 @@ const modelOptions = computed(() => {
   return modelPresets[provider.value] || modelPresets.gemini
 })
 
-function onProviderChange(newProvider: string) {
-  const options = modelPresets[newProvider]
-  if (options && options.length > 0) {
-    model.value = options[0].value
+function applyCredToForm(cred: any) {
+  if (cred) {
+    model.value = cred.model || (modelPresets[cred.provider]?.[0]?.value || '')
+    baseUrl.value = cred.base_url || ''
+    existingMaskedKey.value = cred.masked_key || ''
+  } else {
+    model.value = modelPresets[provider.value]?.[0]?.value || ''
+    baseUrl.value = ''
+    existingMaskedKey.value = ''
   }
 }
 
-async function loadCredentials() {
+function onProviderChange(newProvider: string) {
+  provider.value = newProvider
+  apiKey.value = ''
+  const cred = allCredentials.value.find((c: any) => c.provider === newProvider)
+  applyCredToForm(cred)
+}
+
+async function loadCredentials(keepSelectedProvider = false) {
   try {
     const { data } = await apiClient.get('/teacher/ai-credentials')
-    if (data.length > 0) {
-      const cred = data[0]
-      provider.value = cred.provider
-      model.value = cred.model || (modelPresets[cred.provider]?.[0]?.value || 'gemini-1.5-flash')
-      baseUrl.value = cred.base_url || ''
-      existingMaskedKey.value = cred.masked_key || ''
+    allCredentials.value = data || []
+    if (allCredentials.value.length > 0) {
+      let targetCred = null
+      if (keepSelectedProvider) {
+        targetCred = allCredentials.value.find((c: any) => c.provider === provider.value)
+      } else {
+        // Prefer active credential
+        targetCred = allCredentials.value.find((c: any) => c.is_active) || allCredentials.value[0]
+      }
+      if (targetCred) {
+        provider.value = targetCred.provider
+        applyCredToForm(targetCred)
+      }
     }
   } catch (err) {
     console.error('Failed to load AI credentials', err)
@@ -285,10 +319,20 @@ async function testConnection() {
     const { data } = await apiClient.post('/teacher/ai-credentials/test', {
       provider: provider.value,
       model: model.value,
+      base_url: baseUrl.value || undefined,
+      api_key: apiKey.value || undefined,
     })
-    alertStore.success(`${data.message} (ความเร็ว: ${data.latency_ms}ms)`, 'เชื่อมต่อ AI สำเร็จ')
+    alertStore.showAlert({
+      title: 'เชื่อมต่อ AI สำเร็จ',
+      message: `${data.message} (ความเร็ว: ${data.latency_ms}ms)`,
+      type: 'success',
+    })
   } catch (err: any) {
-    alertStore.error('เชื่อมต่อไม่สำเร็จ กรุณาตรวจสอบ API Key', 'การเชื่อมต่อล้มเหลว')
+    alertStore.showAlert({
+      title: 'การเชื่อมต่อล้มเหลว',
+      message: err.response?.data?.message || 'เชื่อมต่อไม่สำเร็จ กรุณาตรวจสอบ API Key',
+      type: 'error',
+    })
   } finally {
     testing.value = false
   }
@@ -296,7 +340,11 @@ async function testConnection() {
 
 async function handleSave() {
   if (!apiKey.value && !existingMaskedKey.value) {
-    alertStore.warning('กรุณากรอก API Key')
+    alertStore.showAlert({
+      title: 'กรุณากรอก API Key',
+      message: 'โปรดระบุ API Key เพื่อเปิดใช้งานระบบ AI',
+      type: 'warning',
+    })
     return
   }
 
@@ -308,18 +356,33 @@ async function handleSave() {
       base_url: baseUrl.value || null,
       api_key: apiKey.value || 'existing',
     })
-    alertStore.success('บันทึกข้อมูล AI Provider เรียบร้อยแล้ว!')
+
+    if (apiKey.value && provider.value === 'gemini') {
+      localStorage.setItem('user_gemini_api_key', apiKey.value)
+    }
+
+    alertStore.showAlert({
+      title: 'บันทึกสำเร็จ!',
+      message: `ตั้งค่าผู้ให้บริการ ${provider.value.toUpperCase()} เป็น AI หลักของระบบเรียบร้อยแล้ว`,
+      type: 'success',
+    })
     apiKey.value = ''
-    await loadCredentials()
-  } catch (err) {
+    await loadCredentials(true)
+  } catch (err: any) {
     console.error('Failed to save AI credentials', err)
-    alertStore.error('เกิดข้อผิดพลาดในการบันทึกข้อมูล AI Provider')
+    alertStore.showAlert({
+      title: 'เกิดข้อผิดพลาด',
+      message: err.response?.data?.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล AI Provider',
+      type: 'error',
+    })
   } finally {
     saving.value = false
   }
 }
 
-onMounted(loadCredentials)
+onMounted(() => {
+  loadCredentials()
+})
 </script>
 
 <style scoped>

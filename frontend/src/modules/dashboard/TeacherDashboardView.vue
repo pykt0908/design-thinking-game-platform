@@ -18,30 +18,31 @@
           </p>
           <div class="d-flex flex-wrap gap-3">
             <v-btn
-              color="primary"
-              to="/projects/new"
-              prepend-icon="mdi-plus"
-              rounded="lg"
-              class="px-5 font-weight-bold elevation-2"
-              size="large"
-            >
-              + สร้างโปรเจกต์ใหม่
-            </v-btn>
-            <v-btn
-              class="ai-gradient-bg text-white px-5 font-weight-bold elevation-2"
-              to="/projects"
+              class="ai-gradient-bg text-white px-6 font-weight-bold elevation-3"
+              to="/games/new"
               prepend-icon="mdi-creation"
               rounded="lg"
               size="large"
             >
-              สร้างเกมด้วย AI
+              🚀 Design Your Game (สร้างเกมด้วย Design Thinking + AI)
+            </v-btn>
+            <v-btn
+              variant="outlined"
+              to="/games"
+              prepend-icon="mdi-gamepad-variant"
+              rounded="lg"
+              color="primary"
+              class="font-weight-medium"
+              size="large"
+            >
+              คลังเกมของฉัน (My Games)
             </v-btn>
             <v-btn
               variant="outlined"
               to="/classrooms"
               prepend-icon="mdi-google-classroom"
               rounded="lg"
-              color="primary"
+              color="grey-darken-2"
               class="font-weight-medium"
               size="large"
             >

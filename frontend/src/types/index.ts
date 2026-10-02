@@ -164,17 +164,25 @@ export interface GameAssignment {
   game?: Game
 }
 
-// Game Schema v1.0 Standard Definition
+// Game Schema v1.0 Standard Definition & HTML5 Bundle
 export interface GameSchema {
-  version: string
-  title: string
+  version?: string
+  title?: string
   description?: string
-  theme: string
+  theme?: string
   mode?: string
   genre?: string
+  type?: 'html5' | 'scene_quiz' | string
+  bundle?: string
+  html?: string
+  css?: string
+  js?: string
+  features?: string[]
+  assets?: Record<string, any>
+  prompt?: string
   settings: {
-    duration: number
-    maxAttempts: number
+    duration?: number
+    maxAttempts?: number
     allowSound?: boolean
     passingScore?: number
     turnBasedCombat?: boolean
@@ -182,14 +190,17 @@ export interface GameSchema {
   }
   scenes: GameScene[]
   scoring: {
-    initialScore: number
-    maxScore: number
-    passingScore: number
+    initialScore?: number
+    maxScore?: number
+    passingScore?: number
+    [key: string]: any
   }
   completion: {
-    type: string
+    type?: string
     rewardTitle?: string
+    [key: string]: any
   }
+  [key: string]: any
 }
 
 export interface GameScene {
@@ -267,6 +278,8 @@ export interface Asset {
   preview_url?: string
   theme?: string
   style?: string
+  license?: string
+  author?: string
   is_public: boolean
 }
 

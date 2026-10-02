@@ -42,6 +42,11 @@ class Classroom extends Model
             ->withPivot('joined_at');
     }
 
+    public function members(): BelongsToMany
+    {
+        return $this->students();
+    }
+
     public function assignments(): HasMany
     {
         return $this->hasMany(GameAssignment::class);

@@ -43,8 +43,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'projects/new',
-        name: 'ProjectCreate',
-        component: () => import('@/modules/design-thinking/ProjectCreateView.vue'),
+        redirect: '/games/new',
       },
       {
         path: 'projects/:id',
@@ -55,6 +54,11 @@ const routes: RouteRecordRaw[] = [
         path: 'games',
         name: 'GamesList',
         component: () => import('@/modules/game-builder/GamesListView.vue'),
+      },
+      {
+        path: 'games/new',
+        name: 'GameCreate',
+        component: () => import('@/modules/game-builder/GameCreateView.vue'),
       },
       {
         path: 'games/:id/edit',

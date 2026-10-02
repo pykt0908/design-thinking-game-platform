@@ -5,18 +5,18 @@
       <div>
         <h1 class="text-h5 font-weight-bold text-slate-800 d-flex align-center">
           <v-icon icon="mdi-lightbulb-on-outline" color="primary" class="mr-2"></v-icon>
-          Design Thinking Projects
+          Design Your Game (ประวัติโปรเจกต์)
         </h1>
-        <p class="text-body-2 text-grey">โปรเจกต์ออกแบบการเรียนรู้ผ่านกระบวนการ 5 ขั้นตอนสู่เกมการเรียนรู้</p>
+        <p class="text-body-2 text-grey">บันทึกขั้นตอนการออกแบบการเรียนรู้ 5 ขั้นตอนและการสร้างเกม HTML5</p>
       </div>
 
       <v-btn
-        to="/projects/new"
+        to="/games/new"
         class="ai-gradient-bg text-white font-weight-bold px-5 elevation-2"
-        prepend-icon="mdi-plus"
+        prepend-icon="mdi-creation"
         rounded="lg"
       >
-        + สร้างโปรเจกต์ใหม่
+        + สร้างเกมด้วย Design Thinking
       </v-btn>
     </div>
 

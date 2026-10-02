@@ -23,6 +23,13 @@ class AssetController extends Controller
             $query->where('theme', $request->theme);
         }
 
+        if ($request->filled('pack') && $request->pack !== 'all') {
+            $packSlug = $request->pack;
+            $query->whereHas('assetPack', function ($q) use ($packSlug) {
+                $q->where('slug', $packSlug);
+            });
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -31,7 +38,8 @@ class AssetController extends Controller
             });
         }
 
-        $assets = $query->orderBy('created_at', 'desc')->paginate(24);
+        $perPage = min(120, max(12, (int) $request->input('per_page', 48)));
+        $assets = $query->orderBy('id', 'desc')->paginate($perPage);
         return response()->json($assets);
     }
 

@@ -110,8 +110,169 @@
       </div>
     </header>
 
-    <!-- Main Workspace: Tools Palette (Left) + Canvas (Center) + Property Inspector (Right) -->
-    <div class="builder-body d-flex">
+    <!-- IF HTML5 GAME: Interactive Live Studio with Sandbox Runner, AI Refiner, and Code Viewer -->
+    <div v-if="isHtml5Game" class="builder-body d-flex">
+      <!-- Left Panel: AI Refiner & Features Control -->
+      <aside class="builder-tools border-r bg-white pa-4 d-flex flex-column justify-space-between" style="width: 380px;">
+        <div class="overflow-y-auto pr-1">
+          <!-- Game Info Badge -->
+          <div class="d-flex align-center justify-space-between mb-3">
+            <span class="text-caption font-weight-bold text-uppercase text-purple-darken-2">
+              🎮 HTML5 Real Game Engine
+            </span>
+            <v-chip size="x-small" color="primary" variant="flat">
+              v{{ gameBuilderStore.game?.current_version?.version_number || '1.0' }}
+            </v-chip>
+          </div>
+
+          <!-- AI Refiner Box -->
+          <v-card class="pa-4 mb-4 border-card rounded-xl bg-purple-lighten-5 elevation-1">
+            <div class="d-flex align-center mb-2">
+              <v-icon icon="mdi-creation" color="primary" class="mr-2" size="20"></v-icon>
+              <span class="font-weight-bold text-body-2 text-slate-900">สั่ง AI ปรับแก้เกม (AI Refiner)</span>
+            </div>
+            <p class="text-caption text-grey mb-3">
+              บอกให้ AI ปรับปรุงโค้ดเกม เช่น เพิ่มความเร็ว เพิ่มมอนสเตอร์ หรือเปลี่ยนกลไก
+            </p>
+            <v-textarea
+              v-model="refinePrompt"
+              placeholder="เช่น 'เพิ่มความเร็วการเดิน 2 เท่า', 'เพิ่มมอนสเตอร์บอส HP 150', 'เพิ่มแปลงผักเป็น 9 แปลง'..."
+              variant="outlined"
+              density="compact"
+              rounded="lg"
+              rows="3"
+              auto-grow
+              class="mb-2 bg-white"
+            ></v-textarea>
+            
+            <!-- Quick Chips -->
+            <div class="d-flex flex-wrap gap-1 mb-3">
+              <v-chip size="x-small" variant="outlined" color="primary" @click="refinePrompt = 'เพิ่มความเร็วตัวละครและเพิ่มเวลาเป็น 3 นาที'">⚡ เพิ่มความเร็ว</v-chip>
+              <v-chip size="x-small" variant="outlined" color="primary" @click="refinePrompt = 'เพิ่มมอนสเตอร์และศัตรูอีก 3 ตัว'">👾 เพิ่มมอนสเตอร์</v-chip>
+              <v-chip size="x-small" variant="outlined" color="primary" @click="refinePrompt = 'เพิ่มพลังชีวิตเริ่มต้นเป็น 200 HP'">❤️ เพิ่มเลือด 200</v-chip>
+            </div>
+
+            <v-btn
+              block
+              class="ai-gradient-bg text-white font-weight-bold"
+              rounded="lg"
+              size="small"
+              :loading="isRefining"
+              :disabled="!refinePrompt"
+              prepend-icon="mdi-auto-fix"
+              @click="handleRefineGame"
+            >
+              สั่ง AI ปรับแก้โค้ดเกมทันที
+            </v-btn>
+          </v-card>
+
+          <!-- Feature Toggles -->
+          <div class="text-caption font-weight-bold text-slate-800 mb-2">ระบบในเกมที่เปิดใช้งาน (Enabled Systems):</div>
+          <div class="d-flex flex-wrap gap-1 mb-4">
+            <v-chip
+              v-for="feat in (gameBuilderStore.schema?.features || ['map', 'health_bar', 'scoreboard', 'timer', 'inventory', 'dialogue', 'controls', 'sound_fx'])"
+              :key="feat"
+              size="x-small"
+              color="purple-darken-1"
+              variant="tonal"
+              class="font-weight-medium"
+            >
+              ✓ {{ formatFeatureName(feat) }}
+            </v-chip>
+          </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="border-t pt-3 d-flex flex-column gap-2">
+          <v-btn
+            variant="outlined"
+            color="primary"
+            size="small"
+            rounded="lg"
+            prepend-icon="mdi-code-tags"
+            @click="showCodeModal = true"
+          >
+            ดูโค้ด HTML5 Bundle
+          </v-btn>
+          <v-btn
+            variant="tonal"
+            color="purple"
+            size="small"
+            rounded="lg"
+            prepend-icon="mdi-download"
+            @click="downloadHtmlFile"
+          >
+            ดาวน์โหลดไฟล์ .html
+          </v-btn>
+        </div>
+      </aside>
+
+      <!-- Center Runner Frame -->
+      <main class="builder-canvas-wrapper d-flex flex-column align-center justify-center pa-4">
+        <!-- Live Runner Header Bar -->
+        <div class="d-flex justify-space-between align-center w-100 max-w-4xl mb-2 text-white">
+          <div class="d-flex align-center gap-2">
+            <span class="text-caption font-weight-bold">🎮 Live Interactive Sandbox</span>
+            <span class="text-caption text-grey">(คลิกบนจอเพื่อเล่นและทดสอบได้ทันที)</span>
+          </div>
+          <div class="d-flex gap-2">
+            <v-btn size="x-small" variant="outlined" color="white" prepend-icon="mdi-reload" @click="reloadIframe">
+              รีโหลดเกม
+            </v-btn>
+            <v-btn
+              size="x-small"
+              color="success"
+              variant="flat"
+              prepend-icon="mdi-play"
+              :to="`/play/${gameBuilderStore.game?.public_id}?preview=true`"
+              target="_blank"
+            >
+              เปิดเล่นเต็มจอ
+            </v-btn>
+          </div>
+        </div>
+
+        <!-- Sandboxed Game Iframe -->
+        <div class="game-runner-card w-100 max-w-4xl elevation-4 rounded-2xl overflow-hidden" style="height: 78vh; border: 2px solid rgba(198, 112, 255, 0.4); background: #000;">
+          <iframe
+            ref="editorIframeRef"
+            :srcdoc="gameBuilderStore.schema.bundle || gameBuilderStore.schema.html"
+            class="w-100 h-100 border-0"
+            sandbox="allow-scripts allow-same-origin allow-modals"
+            allow="fullscreen; autoplay"
+          ></iframe>
+        </div>
+      </main>
+
+      <!-- Code Inspector Modal -->
+      <v-dialog v-model="showCodeModal" max-width="800">
+        <v-card class="pa-5 rounded-2xl">
+          <div class="d-flex justify-space-between align-center mb-3">
+            <h3 class="text-subtitle-1 font-weight-bold d-flex align-center">
+              <v-icon icon="mdi-code-braces" color="primary" class="mr-2"></v-icon>
+              โค้ดเกม HTML5 Standalone Bundle
+            </h3>
+            <v-btn size="small" variant="text" color="primary" prepend-icon="mdi-content-copy" @click="copyCode">
+              คัดลอกโค้ด
+            </v-btn>
+          </div>
+          <v-textarea
+            :model-value="gameBuilderStore.schema.bundle || gameBuilderStore.schema.html"
+            readonly
+            variant="outlined"
+            density="compact"
+            rows="16"
+            class="font-mono text-caption"
+          ></v-textarea>
+          <div class="d-flex justify-end mt-3">
+            <v-btn variant="text" @click="showCodeModal = false">ปิด</v-btn>
+          </div>
+        </v-card>
+      </v-dialog>
+    </div>
+
+    <!-- Legacy Scene/Element Editor (if not HTML5) -->
+    <div v-else class="builder-body d-flex">
       <!-- Left Tools Palette per spec Section 21 -->
       <aside class="builder-tools border-r bg-white pa-3">
         <div class="text-caption font-weight-bold text-grey text-uppercase mb-2">
@@ -436,7 +597,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useGameBuilderStore } from '@/stores/gameBuilder'
 import { useAlertStore } from '@/stores/alert'
@@ -448,6 +609,81 @@ const router = useRouter()
 const gameBuilderStore = useGameBuilderStore()
 const alertStore = useAlertStore()
 const showPreviewModal = ref(false)
+
+// HTML5 Studio State
+const refinePrompt = ref('')
+const isRefining = ref(false)
+const showCodeModal = ref(false)
+const editorIframeRef = ref<HTMLIFrameElement | null>(null)
+
+const isHtml5Game = computed(() => {
+  return gameBuilderStore.schema?.type === 'html5' || !!gameBuilderStore.schema?.bundle || !(gameBuilderStore.schema?.scenes?.length)
+})
+
+function formatFeatureName(key: string) {
+  const map: Record<string, string> = {
+    map: 'ระบบแผนที่โลก',
+    health_bar: 'หลอดเลือด HP',
+    scoreboard: 'กระดานคะแนน',
+    timer: 'ตัวจับเวลา',
+    inventory: 'กระเป๋าเก็บไอเทม',
+    dialogue: 'บทสนทนา NPC',
+    controls: 'ปุ่มสัมผัสมือถือ',
+    sound_fx: 'เสียงเอฟเฟกต์',
+    skills: 'ท่าไม้ตาย/สตามินา',
+  }
+  return map[key] || key
+}
+
+function reloadIframe() {
+  if (editorIframeRef.value) {
+    const src = editorIframeRef.value.srcdoc
+    editorIframeRef.value.srcdoc = ''
+    setTimeout(() => {
+      if (editorIframeRef.value) editorIframeRef.value.srcdoc = src
+    }, 50)
+  }
+}
+
+async function handleRefineGame() {
+  if (!refinePrompt.value || !gameBuilderStore.game) return
+  isRefining.value = true
+  try {
+    const { data } = await apiClient.post(`/games/${gameBuilderStore.game.id}/refine-html5`, {
+      prompt: refinePrompt.value,
+      features: gameBuilderStore.schema?.features || ['map', 'health_bar', 'scoreboard', 'controls', 'sound_fx'],
+      assets: gameBuilderStore.schema?.assets || {},
+      api_key: localStorage.getItem('user_gemini_api_key') || undefined,
+    })
+    alertStore.success('ปรับปรุงโค้ดเกมด้วย AI เรียบร้อยแล้ว!')
+    await gameBuilderStore.loadGame(gameBuilderStore.game.id)
+    refinePrompt.value = ''
+    reloadIframe()
+  } catch (err: any) {
+    console.error(err)
+    alertStore.error(err.response?.data?.message || 'ไม่สามารถปรับแก้เกมได้ กรุณาลองใหม่อีกครั้ง')
+  } finally {
+    isRefining.value = false
+  }
+}
+
+function copyCode() {
+  const code = gameBuilderStore.schema?.bundle || gameBuilderStore.schema?.html || ''
+  navigator.clipboard.writeText(code)
+  alertStore.success('คัดลอกโค้ด HTML5 เรียบร้อยแล้ว!')
+}
+
+function downloadHtmlFile() {
+  const code = gameBuilderStore.schema?.bundle || gameBuilderStore.schema?.html || ''
+  const blob = new Blob([code], { type: 'text/html;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = (gameBuilderStore.game?.title || 'game') + '.html'
+  a.click()
+  URL.revokeObjectURL(url)
+  alertStore.success('ดาวน์โหลดไฟล์เกมสำเร็จ!')
+}
 
 function formatElementType(type: string) {
   switch (type) {

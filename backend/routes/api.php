@@ -33,10 +33,14 @@ Route::prefix('v1')->group(function () {
         Route::post('/projects/{id}/generate-game', [ProjectController::class, 'generateGame']);
 
         // Games & Editor
+        Route::post('/games/ai-generate-step', [GameController::class, 'aiGenerateStep']);
+        Route::post('/games/ai-autofill-all', [GameController::class, 'aiAutofillAll']);
+        Route::post('/games/preview-html5', [GameController::class, 'previewHtml5']);
         Route::apiResource('games', GameController::class);
         Route::post('/games/{id}/save-schema', [GameController::class, 'saveSchema']);
         Route::post('/games/{id}/publish', [GameController::class, 'publish']);
         Route::post('/games/{id}/duplicate', [GameController::class, 'duplicate']);
+        Route::post('/games/{id}/refine-html5', [GameController::class, 'refineHtml5']);
 
         // Classrooms
         Route::apiResource('classrooms', ClassroomController::class);

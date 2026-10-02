@@ -83,7 +83,7 @@
             <div>
               <div class="text-caption text-grey">ผลการประเมิน</div>
               <div class="font-weight-bold text-success d-flex align-center justify-center">
-                <template v-if="currentScore >= (schema.scoring.passingScore || 60)">
+                <template v-if="currentScore >= (schema.scoring?.passingScore ?? 60)">
                   <v-icon icon="mdi-check-circle" size="16" class="mr-1"></v-icon> ผ่านเกณฑ์
                 </template>
                 <template v-else>
@@ -101,6 +101,17 @@
               กลับสู่บทเรียน
             </v-btn>
           </div>
+        </div>
+
+        <!-- Real HTML5 Sandboxed Game Runner -->
+        <div v-else-if="isHtml5Game" class="html5-game-viewport w-100 h-100 d-flex flex-column align-center justify-center position-relative" style="min-height: 82vh;">
+          <iframe
+            :srcdoc="schema.bundle || schema.html"
+            class="html5-game-iframe w-100 rounded-2xl elevation-4"
+            sandbox="allow-scripts allow-same-origin allow-modals"
+            allow="fullscreen; autoplay"
+            style="width: 100%; height: 82vh; border: 2px solid rgba(198, 112, 255, 0.4); background: #000;"
+          ></iframe>
         </div>
 
         <!-- Active Scene Interactive Content -->
@@ -633,6 +644,21 @@ const currentGameGenre = computed<'rpg' | 'kahoot' | 'detective' | 'visual_novel
   return 'quiz'
 })
 
+const isHtml5Game = computed(() => {
+  return schema.value?.type === 'html5' || !!schema.value?.bundle || !!(schema.value as any)?.html
+})
+
+function handleHtml5Message(e: MessageEvent) {
+  if (e.data?.type === 'dtg:score_update') {
+    currentScore.value = e.data.score || 0
+  } else if (e.data?.type === 'dtg:game_over') {
+    currentScore.value = e.data.score || currentScore.value
+    if (e.data.won) {
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } })
+    }
+  }
+}
+
 const isRpgMode = computed(() => currentGameGenre.value === 'rpg')
 const isKahootMode = computed(() => currentGameGenre.value === 'kahoot')
 const isDetectiveMode = computed(() => currentGameGenre.value === 'detective')
@@ -739,7 +765,7 @@ const currentScene = computed<GameScene | null>(() => {
 })
 
 const progressPercent = computed(() => {
-  if (!schema.value || schema.value.scenes.length === 0) return 0
+  if (!schema.value?.scenes || schema.value.scenes.length === 0) return 0
   return Math.round(((currentSceneIndex.value + 1) / schema.value.scenes.length) * 100)
 })
 
@@ -799,14 +825,14 @@ async function selectOption(element: GameElement, option: GameOption) {
 
 function goToNextScene(nextSceneId?: string) {
   if (nextSceneId) {
-    const targetIdx = schema.value?.scenes.findIndex((s) => s.id === nextSceneId)
+    const targetIdx = schema.value?.scenes?.findIndex((s) => s.id === nextSceneId)
     if (targetIdx !== undefined && targetIdx >= 0) {
       currentSceneIndex.value = targetIdx
       return
     }
   }
 
-  if (currentSceneIndex.value < (schema.value?.scenes.length || 1) - 1) {
+  if (currentSceneIndex.value < (schema.value?.scenes?.length || 1) - 1) {
     currentSceneIndex.value++
   } else {
     finishGame()
@@ -852,7 +878,7 @@ function restartGame() {
   answeredQuestions.value = {}
   selectedAnswers.value = {}
   isGameComplete.value = false
-  timeRemaining.value = schema.value?.settings.duration || 300
+  timeRemaining.value = schema.value?.settings?.duration || 300
   startTimer()
 }
 
@@ -880,6 +906,7 @@ async function confirmExit() {
 }
 
 onMounted(async () => {
+  window.addEventListener('message', handleHtml5Message)
   const publicId = route.params.publicId as string
   const isPreview = route.query.preview !== undefined ? String(route.query.preview) : 'true'
   try {
@@ -908,6 +935,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  window.removeEventListener('message', handleHtml5Message)
   if (timerInterval) clearInterval(timerInterval)
 })
 </script>

@@ -23,6 +23,22 @@
 
     <!-- Filters per spec Section 23 -->
     <v-card class="pa-4 mb-6 border-card rounded-xl bg-white elevation-1">
+      <!-- Pack Chips -->
+      <div class="d-flex align-center mb-3 flex-wrap gap-1">
+        <span class="text-caption font-weight-bold text-slate-700 mr-2">คลังแพ็กเกจ Kenney:</span>
+        <v-chip
+          v-for="pack in kenneyPacks"
+          :key="pack.slug"
+          size="small"
+          :color="selectedPack === pack.slug ? 'primary' : undefined"
+          :variant="selectedPack === pack.slug ? 'flat' : 'outlined'"
+          class="cursor-pointer font-weight-medium"
+          @click="selectPack(pack.slug)"
+        >
+          {{ pack.name }}
+        </v-chip>
+      </div>
+
       <v-row align="center">
         <v-col cols="12" md="5">
           <v-text-field
@@ -33,71 +49,74 @@
             hide-details
             rounded="lg"
             variant="outlined"
-            @update:model-value="fetchAssets"
+            @update:model-value="fetchAssets(1)"
           ></v-text-field>
         </v-col>
 
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="7">
           <v-btn-toggle
             v-model="selectedType"
             density="compact"
             rounded="lg"
             color="primary"
             mandatory
-            @update:model-value="fetchAssets"
+            class="flex-wrap"
+            @update:model-value="fetchAssets(1)"
           >
             <v-btn value="all" size="small">ทั้งหมด</v-btn>
-            <v-btn value="character" size="small">ตัวละคร</v-btn>
-            <v-btn value="object" size="small">วัตถุ</v-btn>
-            <v-btn value="background" size="small">ฉากหลัง</v-btn>
+            <v-btn value="character" size="small">👤 ตัวละคร</v-btn>
+            <v-btn value="item" size="small">🥕 ไอเทม/อาหาร</v-btn>
+            <v-btn value="object" size="small">📦 วัตถุ/ยาน</v-btn>
+            <v-btn value="background" size="small">🧱 ฉาก/พื้นดิน</v-btn>
+            <v-btn value="ui" size="small">🎮 ปุ่ม/UI</v-btn>
           </v-btn-toggle>
-        </v-col>
-
-        <v-col cols="12" md="3">
-          <v-select
-            v-model="selectedTheme"
-            :items="['all', 'school', 'science', 'environment']"
-            label="ธีม (Theme)"
-            density="compact"
-            hide-details
-            rounded="lg"
-            variant="outlined"
-            @update:model-value="fetchAssets"
-          ></v-select>
         </v-col>
       </v-row>
     </v-card>
 
     <!-- Assets Grid (5 Columns on Desktop) -->
-    <div v-if="assets.length > 0" class="asset-grid-5">
-      <div v-for="a in assets" :key="a.id" class="asset-grid-item">
-        <v-card class="border-card rounded-2xl overflow-hidden hover-card pa-3 text-center h-100 d-flex flex-column justify-space-between bg-white elevation-1">
-          <div>
-            <div
-              class="asset-preview-box rounded-xl pa-3 mb-3 d-flex align-center justify-center bg-slate-50 border cursor-pointer position-relative overflow-hidden"
-              style="height: 130px;"
-              @click="previewAsset(a)"
-            >
-              <img :src="a.file_path" :alt="a.name" class="asset-img object-contain" />
-              <div class="preview-overlay d-flex align-center justify-center">
-                <v-icon icon="mdi-magnify-plus" color="white" size="24"></v-icon>
+    <div v-if="assets.length > 0">
+      <div class="asset-grid-5 mb-6">
+        <div v-for="a in assets" :key="a.id" class="asset-grid-item">
+          <v-card class="border-card rounded-2xl overflow-hidden hover-card pa-3 text-center h-100 d-flex flex-column justify-space-between bg-white elevation-1">
+            <div>
+              <div
+                class="asset-preview-box rounded-xl pa-3 mb-3 d-flex align-center justify-center bg-slate-50 border cursor-pointer position-relative overflow-hidden"
+                style="height: 120px;"
+                @click="previewAsset(a)"
+              >
+                <img :src="a.file_path" :alt="a.name" class="asset-img object-contain pixel-art-img" style="max-height: 70px; max-width: 70px;" />
+                <div class="preview-overlay d-flex align-center justify-center">
+                  <v-icon icon="mdi-magnify-plus" color="white" size="24"></v-icon>
+                </div>
+              </div>
+
+              <div class="font-weight-bold text-subtitle-2 text-slate-800 text-truncate mb-1" :title="a.name">
+                {{ a.name }}
               </div>
             </div>
 
-            <div class="font-weight-bold text-subtitle-2 text-slate-800 text-truncate mb-1" :title="a.name">
-              {{ a.name }}
+            <div class="d-flex align-center justify-center gap-1 mt-2 flex-wrap">
+              <v-chip size="x-small" color="primary" variant="tonal" class="font-weight-medium">
+                {{ formatType(a.type) }}
+              </v-chip>
+              <v-chip v-if="a.license" size="x-small" color="teal" variant="outlined" class="font-weight-medium">
+                CC0
+              </v-chip>
             </div>
-          </div>
+          </v-card>
+        </div>
+      </div>
 
-          <div class="d-flex align-center justify-center gap-1 mt-2">
-            <v-chip size="x-small" color="primary" variant="tonal" class="font-weight-medium">
-              {{ formatType(a.type) }}
-            </v-chip>
-            <v-chip v-if="a.theme && a.theme !== '-'" size="x-small" color="secondary" variant="tonal" class="font-weight-medium">
-              {{ a.theme }}
-            </v-chip>
-          </div>
-        </v-card>
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="d-flex justify-center my-4">
+        <v-pagination
+          v-model="currentPage"
+          :length="totalPages"
+          rounded="circle"
+          color="primary"
+          @update:model-value="fetchAssets"
+        ></v-pagination>
       </div>
     </div>
 
@@ -107,9 +126,9 @@
         <v-icon icon="mdi-image-search-outline" size="36" color="primary"></v-icon>
       </v-avatar>
       <div class="text-subtitle-1 font-weight-bold text-slate-800 mb-1">ไม่พบ Asset ที่ค้นหา</div>
-      <p class="text-caption text-grey mb-4">ลองเปลี่ยนคำค้นหาหรืออัปโหลด Asset ใหม่เข้าสู่คลังของคุณ</p>
-      <v-btn color="primary" rounded="lg" prepend-icon="mdi-upload" @click="showUploadDialog = true">
-        อัปโหลด Asset
+      <p class="text-caption text-grey mb-4">ลองเปลี่ยนคำค้นหาหรือเลือกดูแพ็กเกจ Kenney 2D ด้านบน</p>
+      <v-btn color="primary" rounded="lg" prepend-icon="mdi-refresh" @click="resetFilters">
+        รีเซ็ตการค้นหา
       </v-btn>
     </div>
 
@@ -202,7 +221,31 @@ const alertStore = useAlertStore()
 const assets = ref<Asset[]>([])
 const searchQuery = ref('')
 const selectedType = ref('all')
-const selectedTheme = ref('all')
+const selectedPack = ref('all')
+const currentPage = ref(1)
+const totalPages = ref(1)
+
+const kenneyPacks = [
+  { slug: 'all', name: '🌟 ทั้งหมด' },
+  { slug: 'kenney-tiny-dungeon', name: '⚔️ Tiny Dungeon' },
+  { slug: 'kenney-pixel-platformer-food', name: '🥕 Food & Crops' },
+  { slug: 'kenney-pixel-platformer', name: '🎮 Pixel Platformer' },
+  { slug: 'kenney-tiny-town', name: '🏘️ Tiny Town' },
+  { slug: 'kenney-simple-space', name: '🚀 Simple Space' },
+  { slug: 'kenney-ui-pack', name: '🎨 UI Pack' },
+]
+
+function selectPack(slug: string) {
+  selectedPack.value = slug
+  fetchAssets(1)
+}
+
+function resetFilters() {
+  selectedPack.value = 'all'
+  selectedType.value = 'all'
+  searchQuery.value = ''
+  fetchAssets(1)
+}
 
 const showUploadDialog = ref(false)
 const uploadName = ref('')
@@ -221,21 +264,33 @@ function previewAsset(a: Asset) {
 function formatType(type: string) {
   switch (type) {
     case 'character': return 'ตัวละคร'
-    case 'object': return 'วัตถุ'
+    case 'item': return 'ไอเทม/อาหาร'
+    case 'object': return 'วัตถุ/ยาน'
     case 'background': return 'ฉากหลัง'
+    case 'ui': return 'UI'
     case 'icon': return 'ไอคอน'
     default: return type
   }
 }
 
-async function fetchAssets() {
-  const params: any = {}
+async function fetchAssets(page = 1) {
+  currentPage.value = page
+  const params: any = { page, per_page: 30 }
   if (selectedType.value !== 'all') params.type = selectedType.value
-  if (selectedTheme.value !== 'all') params.theme = selectedTheme.value
+  if (selectedPack.value !== 'all') params.pack = selectedPack.value
   if (searchQuery.value) params.search = searchQuery.value
 
-  const { data } = await apiClient.get('/assets', { params })
-  assets.value = data.data || data
+  try {
+    const { data } = await apiClient.get('/assets', { params })
+    assets.value = data.data || data
+    if (data.last_page) {
+      totalPages.value = data.last_page
+    } else {
+      totalPages.value = 1
+    }
+  } catch (err) {
+    console.error('Failed to fetch assets', err)
+  }
 }
 
 async function handleUpload() {
@@ -329,6 +384,12 @@ onMounted(fetchAssets)
   max-height: 100%;
   max-width: 100%;
   transition: transform 0.3s ease;
+}
+
+.pixel-art-img {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
 .hover-card:hover .asset-img {

@@ -11,13 +11,12 @@
       </div>
 
       <v-btn
-        to="/projects/new"
-        color="primary"
+        to="/games/new"
+        class="ai-gradient-bg text-white font-weight-bold px-5 elevation-2"
         rounded="lg"
-        prepend-icon="mdi-plus"
-        class="font-weight-bold px-5 elevation-2"
+        prepend-icon="mdi-creation"
       >
-        + สร้างเกมใหม่
+        + ออกแบบ & สร้างเกมใหม่ (Design Thinking + AI)
       </v-btn>
     </div>
 
@@ -127,10 +126,15 @@
         />
       </div>
       <h3 class="text-h6 font-weight-bold text-slate-800 mb-1">ยังไม่มีเกมในคลังของคุณ</h3>
-      <p class="text-body-2 text-grey mb-5">สร้างเกมได้ง่ายๆ ผ่านกระบวนการ Design Thinking 5 ขั้นตอน หรือปล่อยให้ AI ช่วยสร้างเกมอัตโนมัติ</p>
-      <v-btn to="/projects/new" color="primary" rounded="lg" size="large" class="font-weight-bold elevation-2">
-        + สร้างโปรเจกต์เพื่อสร้างเกม
-      </v-btn>
+      <p class="text-body-2 text-grey mb-5">สร้างเกมได้ทันทีด้วยตนเอง หรือให้ AI ช่วยสร้างอัตโนมัติ โดยไม่ต้องผ่านขั้นตอน Design Thinking Project</p>
+      <div class="d-flex justify-center flex-wrap gap-3">
+        <v-btn to="/games/new" class="ai-gradient-bg text-white font-weight-bold elevation-2" rounded="lg" size="large" prepend-icon="mdi-rocket-launch">
+          + สร้างเกมใหม่ทันที
+        </v-btn>
+        <v-btn to="/projects/new" variant="outlined" color="primary" rounded="lg" size="large" prepend-icon="mdi-lightbulb-on-outline">
+          สร้างผ่านกระบวนการ Design Thinking
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>

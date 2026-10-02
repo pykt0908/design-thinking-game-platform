@@ -76,6 +76,7 @@ export const useGameBuilderStore = defineStore('gameBuilder', () => {
 
   function addScene(title?: string) {
     if (!schema.value) return
+    if (!schema.value.scenes) schema.value.scenes = []
     recordHistory()
     const newId = 'scene_' + Date.now().toString(36)
     const newScene: GameScene = {
@@ -88,7 +89,7 @@ export const useGameBuilderStore = defineStore('gameBuilder', () => {
   }
 
   function deleteScene(sceneId: string) {
-    if (!schema.value || schema.value.scenes.length <= 1) return
+    if (!schema.value || !schema.value.scenes || schema.value.scenes.length <= 1) return
     recordHistory()
     schema.value.scenes = schema.value.scenes.filter((s: GameScene) => s.id !== sceneId)
     if (activeSceneId.value === sceneId) {
