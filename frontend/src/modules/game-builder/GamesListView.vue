@@ -1,52 +1,81 @@
 <template>
   <div>
-    <div class="d-flex justify-space-between align-center mb-6">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-space-between align-center gap-3 mb-6">
       <div>
-        <h1 class="text-h5 font-weight-bold text-slate-800">เกมการเรียนรู้ของฉัน (My Games)</h1>
-        <p class="text-body-2 text-grey">จัดการ แก้ไข และมอบหมายเกมให้กับห้องเรียน</p>
+        <h1 class="text-h5 font-weight-bold text-slate-800 d-flex align-center">
+          <v-icon icon="mdi-gamepad-variant" color="primary" class="mr-2"></v-icon>
+          เกมการเรียนรู้ของฉัน (My Games)
+        </h1>
+        <p class="text-body-2 text-grey">จัดการ แก้ไข ทดลองเล่น และมอบหมายเกมให้กับห้องเรียน</p>
+      </div>
+
+      <v-btn
+        to="/projects/new"
+        color="primary"
+        rounded="lg"
+        prepend-icon="mdi-plus"
+        class="font-weight-bold px-5 elevation-2"
+      >
+        + สร้างเกมใหม่
+      </v-btn>
+    </div>
+
+    <!-- Loading Skeleton (5 columns) -->
+    <div v-if="loading" class="game-grid-5">
+      <div v-for="i in 5" :key="i">
+        <v-skeleton-loader type="image, article" class="border-card rounded-2xl"></v-skeleton-loader>
       </div>
     </div>
 
-    <v-row v-if="loading">
-      <v-col v-for="i in 3" :key="i" cols="12" md="4">
-        <v-skeleton-loader type="card" class="border-card rounded-xl"></v-skeleton-loader>
-      </v-col>
-    </v-row>
-
-    <v-row v-else-if="games.length > 0">
-      <v-col v-for="g in games" :key="g.id" cols="12" md="6" lg="4">
-        <v-card class="border-card rounded-xl overflow-hidden h-100 d-flex flex-column justify-space-between hover-card">
-          <div class="position-relative">
+    <!-- Games Grid (5 Columns on Desktop) -->
+    <div v-else-if="games.length > 0" class="game-grid-5">
+      <div v-for="g in games" :key="g.id" class="game-grid-item">
+        <v-card class="border-card rounded-2xl overflow-hidden h-100 d-flex flex-column justify-space-between hover-card bg-white elevation-1">
+          <!-- Game Cover Banner -->
+          <div class="position-relative game-cover-wrapper">
             <v-img
               :src="g.cover_image || 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&auto=format&fit=crop&q=80'"
-              height="160"
+              height="135"
               cover
               class="bg-grey-lighten-2"
             >
-              <div class="pa-3 d-flex justify-space-between">
-                <v-chip size="small" :color="g.status === 'published' ? 'success' : 'grey'" variant="flat" class="font-weight-bold">
+              <div class="pa-2 d-flex justify-space-between align-start">
+                <v-chip
+                  size="x-small"
+                  :color="g.status === 'published' ? 'success' : 'grey-darken-3'"
+                  variant="flat"
+                  class="font-weight-bold text-white shadow-sm"
+                >
                   {{ g.status === 'published' ? 'เผยแพร่แล้ว' : 'ฉบับร่าง' }}
                 </v-chip>
-                <v-chip size="small" color="black" variant="flat" class="font-weight-bold">
+                <v-chip size="x-small" color="black" variant="flat" class="font-weight-bold text-white shadow-sm">
                   v{{ g.current_version?.version_number || '1.0' }}
                 </v-chip>
               </div>
             </v-img>
           </div>
 
-          <div class="pa-5 flex-grow-1">
-            <h2 class="text-subtitle-1 font-weight-bold text-slate-800 mb-1">
-              {{ g.title }}
-            </h2>
-            <p class="text-caption text-grey-darken-1 mb-3 line-clamp-2">
-              {{ g.description || 'เกมการเรียนรู้แบบโต้ตอบ' }}
-            </p>
-            <div class="text-caption text-grey">
-              รหัสสาธารณะ: <strong class="text-primary">{{ g.public_id }}</strong>
+          <!-- Game Card Body -->
+          <div class="pa-3 flex-grow-1 d-flex flex-column justify-space-between">
+            <div>
+              <h2 class="text-subtitle-2 font-weight-bold text-slate-800 mb-1 text-truncate" :title="g.title">
+                {{ g.title }}
+              </h2>
+              <p class="text-caption text-grey-darken-1 mb-2 line-clamp-2" :title="g.description" style="min-height: 32px;">
+                {{ g.description || 'เกมการเรียนรู้แบบโต้ตอบ' }}
+              </p>
+            </div>
+
+            <!-- Public Code Pill -->
+            <div class="bg-purple-lighten-5 rounded-lg px-2 py-1 mb-2 d-flex justify-space-between align-center">
+              <span class="text-caption text-grey-darken-2" style="font-size: 11px;">รหัสเกม:</span>
+              <strong class="text-caption font-weight-bold text-primary">{{ g.public_id }}</strong>
             </div>
           </div>
 
-          <div class="px-5 pb-5 pt-2 d-flex justify-space-between align-center border-t gap-2">
+          <!-- Card Actions Footer -->
+          <div class="px-3 pb-3 pt-1 d-flex justify-space-between align-center border-t gap-2">
             <v-btn
               :to="`/play/${g.public_id}`"
               target="_blank"
@@ -54,9 +83,10 @@
               color="success"
               size="small"
               rounded="lg"
+              class="flex-1-1 px-1 font-weight-bold text-caption"
               prepend-icon="mdi-play"
             >
-              เล่นเกม
+              เล่น
             </v-btn>
 
             <v-btn
@@ -65,16 +95,18 @@
               variant="flat"
               size="small"
               rounded="lg"
+              class="flex-1-1 px-1 font-weight-bold text-caption"
               prepend-icon="mdi-pencil"
             >
-              เปิด Editor
+              แก้ไข
             </v-btn>
           </div>
         </v-card>
-      </v-col>
-    </v-row>
+      </div>
+    </div>
 
-    <div v-else class="text-center pa-12 border-card rounded-2xl hero-gradient-card">
+    <!-- Empty State -->
+    <div v-else class="text-center pa-12 border-card rounded-2xl hero-gradient-card bg-white">
       <div class="mb-4">
         <img
           src="@/assets/images/ai_game_wizard.jpg"
@@ -111,17 +143,60 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+
+/* 5 Column Grid System */
+.game-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1279px) {
+  .game-grid-5 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .game-grid-5 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .game-grid-5 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .game-grid-5 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .hover-card {
-  transition: transform 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  border-color: #edd4f8 !important;
 }
+
 .hover-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -6px rgba(61, 0, 102, 0.15), 0 4px 10px -2px rgba(198, 112, 255, 0.2) !important;
 }
+
+.game-cover-wrapper {
+  overflow: hidden;
+}
+
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
-.gap-2 { gap: 8px; }
 </style>
