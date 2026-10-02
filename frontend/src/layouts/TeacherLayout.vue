@@ -235,10 +235,15 @@ function handleLogout() {
   color: #3d0066 !important;
 }
 
-/* Sidebar Prominent Styling */
+/* Sidebar Prominent Styling - Sticky Fixed */
 .sidebar-prominent {
   background: linear-gradient(180deg, #1f0036 0%, #290048 50%, #36005c 100%) !important;
   border-right: 1px solid rgba(198, 112, 255, 0.2) !important;
+  position: fixed !important;
+  top: 64px !important;
+  height: calc(100vh - 64px) !important;
+  z-index: 99 !important;
+  overflow-y: auto !important;
 }
 
 .sidebar-section-title {

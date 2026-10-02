@@ -1690,11 +1690,16 @@ onMounted(async () => {
   box-shadow: 0 4px 14px rgba(255, 224, 71, 0.35);
 }
 
-/* Stepper Navigation on Left */
+/* Stepper Navigation on Left - Sticky */
 .luxury-nav-card {
   background: #ffffff;
   border: 1px solid rgba(198, 112, 255, 0.2);
   box-shadow: 0 4px 20px rgba(61, 0, 102, 0.04);
+  position: sticky;
+  top: 80px;
+  z-index: 10;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
 }
 
 .step-nav-item {

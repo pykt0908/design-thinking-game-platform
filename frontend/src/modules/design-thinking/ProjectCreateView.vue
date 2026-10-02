@@ -101,82 +101,100 @@
         ></v-textarea>
       </v-card>
 
-      <!-- Section 2: โหมดการเล่น (Game Mode) -->
+      <!-- Section 2: โหมดการเล่น (Game Mode: Offline/Single vs Online/Live) -->
       <v-card class="pa-6 mb-6 border-card rounded-2xl bg-white elevation-1">
-        <div class="d-flex align-center mb-4">
-          <v-avatar size="36" color="purple-lighten-5" class="mr-3">
-            <v-icon icon="mdi-controller" color="primary" size="20"></v-icon>
-          </v-avatar>
-          <div>
-            <h2 class="text-subtitle-1 font-weight-bold text-slate-900">2. โหมดการเล่น (Game Mode)</h2>
-            <div class="text-caption text-grey">เลือกรูปแบบการจัดกิจกรรมการเรียนรู้</div>
+        <div class="d-flex align-center justify-space-between mb-4 flex-wrap gap-2">
+          <div class="d-flex align-center">
+            <v-avatar size="36" color="purple-lighten-5" class="mr-3">
+              <v-icon icon="mdi-controller" color="primary" size="20"></v-icon>
+            </v-avatar>
+            <div>
+              <h2 class="text-subtitle-1 font-weight-bold text-slate-900">2. โหมดการเล่น (Game Mode)</h2>
+              <div class="text-caption text-grey">เลือกสไตล์การจัดกิจกรรม: เล่นคนเดียวตามจังหวะตนเอง หรือ แข่งขันสดในห้องเรียน</div>
+            </div>
           </div>
+          <v-chip size="x-small" color="primary" variant="outlined" class="font-weight-bold">
+            รูปแบบเกมจะเปลี่ยนตามโหมดที่เลือกอัตโนมัติ
+          </v-chip>
         </div>
 
         <div class="mode-grid">
-          <!-- Mode 1: Single Player -->
+          <!-- Mode 1: Single Player (Offline / Self-Paced) -->
           <div
             class="mode-card rounded-2xl pa-4 cursor-pointer border"
             :class="{ 'mode-card-active': gameMode === 'single' }"
-            @click="gameMode = 'single'"
+            @click="selectGameMode('single')"
           >
             <div class="d-flex justify-space-between align-start mb-2">
               <v-avatar size="44" color="purple-lighten-5">
-                <v-icon icon="mdi-account" color="primary" size="24"></v-icon>
+                <v-icon icon="mdi-account-star" color="primary" size="24"></v-icon>
               </v-avatar>
-              <v-icon
-                :icon="gameMode === 'single' ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
-                :color="gameMode === 'single' ? 'primary' : 'grey'"
-              ></v-icon>
+              <v-chip size="x-small" color="primary" variant="flat" class="font-weight-bold">
+                Offline / Self-Paced
+              </v-chip>
             </div>
             <h3 class="text-subtitle-1 font-weight-bold text-slate-900 mb-1">
               เล่นเดี่ยว (Single Player Quest)
             </h3>
             <p class="text-caption text-slate-600 mb-0">
-              นักเรียนเล่นตามจังหวะตนเอง (Self-Paced) ผ่านด่านเนื้อเรื่อง ตอบคำถามแก้ปริศนา เหมาะสำหรับการบ้านหรือฝึกฝนรายบุคคล
+              ผู้เรียนเล่นตามจังหวะตนเอง ผ่านด่านเนื้อเรื่อง ตอบคำถามผจญภัย มีระบบพลังชีวิต (HP) และปลดล็อกไอเทม เหมาะสำหรับการบ้านหรือฝึกฝนอิสระ
             </p>
           </div>
 
-          <!-- Mode 2: Classroom Live -->
+          <!-- Mode 2: Classroom Live (Online / Multiplayer Kahoot Style) -->
           <div
             class="mode-card rounded-2xl pa-4 cursor-pointer border"
             :class="{ 'mode-card-active': gameMode === 'multiplayer_live' }"
-            @click="gameMode = 'multiplayer_live'"
+            @click="selectGameMode('multiplayer_live')"
           >
             <div class="d-flex justify-space-between align-start mb-2">
               <v-avatar size="44" color="amber-lighten-5">
                 <v-icon icon="mdi-account-group" color="warning" size="24"></v-icon>
               </v-avatar>
-              <v-icon
-                :icon="gameMode === 'multiplayer_live' ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
-                :color="gameMode === 'multiplayer_live' ? 'warning' : 'grey'"
-              ></v-icon>
+              <v-chip size="x-small" color="warning" variant="flat" class="font-weight-bold text-slate-900">
+                Online Live / Kahoot Style
+              </v-chip>
             </div>
             <h3 class="text-subtitle-1 font-weight-bold text-slate-900 mb-1">
-              แข่งขันสดในห้องเรียน (Classroom Live / Kahoot Style)
+              แข่งขันสดในห้องเรียน (Classroom Live)
             </h3>
             <p class="text-caption text-slate-600 mb-0">
-              ครูขึ้นจอใหญ่โปรเจกเตอร์ นักเรียนใส่ PIN เข้าแข่งกันตอบคำถามความเร็ว มีตาราง Leaderboard สด เหมาะสำหรับสร้างบรรยากาศตื่นเต้นในคาบ
+              ครูขึ้นจอใหญ่โปรเจกเตอร์ นักเรียนใส่ PIN เข้าประชันความเร็วพร้อมกันทั้งห้อง มีนับเวลาถอยหลัง โบนัสความเร็ว และตารางคะแนนสด
             </p>
           </div>
         </div>
       </v-card>
 
-      <!-- Section 3: สไตล์ของเกม (Game Genre & Style) -->
+      <!-- Section 3: สไตล์ของเกม (Game Genre & Style: Distinct per mode) -->
       <v-card class="pa-6 mb-6 border-card rounded-2xl bg-white elevation-1">
-        <div class="d-flex align-center mb-4">
-          <v-avatar size="36" color="purple-lighten-5" class="mr-3">
-            <v-icon icon="mdi-sword-cross" color="primary" size="20"></v-icon>
-          </v-avatar>
-          <div>
-            <h2 class="text-subtitle-1 font-weight-bold text-slate-900">3. สไตล์เกม (Game Style)</h2>
-            <div class="text-caption text-grey">ระบบ AI จะออกแบบกลไกตามสไตล์ที่ครูเลือกโดยไม่ต้องสร้างเอง</div>
+        <div class="d-flex align-center justify-space-between mb-4 flex-wrap gap-2">
+          <div class="d-flex align-center">
+            <v-avatar size="36" :color="gameMode === 'single' ? 'purple-lighten-5' : 'amber-lighten-5'" class="mr-3">
+              <v-icon :icon="gameMode === 'single' ? 'mdi-sword-cross' : 'mdi-lightning-bolt'" :color="gameMode === 'single' ? 'primary' : 'warning'" size="20"></v-icon>
+            </v-avatar>
+            <div>
+              <h2 class="text-subtitle-1 font-weight-bold text-slate-900">
+                3. รูปแบบเกมสำหรับโหมด: <span :class="gameMode === 'single' ? 'text-primary' : 'text-amber-darken-3'">{{ gameMode === 'single' ? 'เล่นเดี่ยว (Single Player)' : 'ห้องเรียนสด (Classroom Live)' }}</span>
+              </h2>
+              <div class="text-caption text-grey">
+                {{ gameMode === 'single' ? 'กลไกเกมเฉพาะบุคคล: ระบบฉาก เควสต์ การสำรวจ และการเก็บคะแนนสะสม' : 'กลไกเกมแข่งขันหลายคน: ระบบเวลาจำกัด โบนัสความเร็ว และการปะทะคะแนนสด' }}
+              </div>
+            </div>
           </div>
+
+          <v-chip
+            size="small"
+            :color="gameMode === 'single' ? 'primary' : 'warning'"
+            class="font-weight-bold"
+          >
+            <v-icon :icon="gameMode === 'single' ? 'mdi-shield-check' : 'mdi-fire'" size="14" class="mr-1"></v-icon>
+            {{ gameMode === 'single' ? '4 สไตล์เกมเล่นเดี่ยว' : '4 สไตล์เกมประชันสด' }}
+          </v-chip>
         </div>
 
         <div class="genre-grid">
           <div
-            v-for="g in gameGenres"
+            v-for="g in activeGameGenres"
             :key="g.id"
             class="genre-card rounded-2xl pa-4 cursor-pointer border"
             :class="{ 'genre-card-active': gameGenre === g.id }"
@@ -252,7 +270,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import apiClient from '@/api/client'
 import { useAlertStore } from '@/stores/alert'
@@ -269,63 +287,122 @@ const gameGenre = ref('rpg_quest')
 const themePack = ref('fantasy')
 const loading = ref(false)
 
+// Distinct game genres for Offline / Single Player
+const singlePlayerGenres = [
+  {
+    id: 'rpg_quest',
+    title: '2D RPG Turn-Based Battle',
+    badge: 'ผจญภัย & ต่อสู้',
+    badgeColor: 'primary',
+    icon: 'mdi-sword-cross',
+    iconColor: 'primary',
+    bgColor: 'purple-lighten-5',
+    description: 'สวมบทบาทผู้กล้า เดินสำรวจฉาก ตอบคำถามเพื่อปล่อยเวทมนตร์หรือพลังโจมตีมอนสเตอร์/บอสตามเนื้อเรื่อง มีเกจ HP และระบบเลเวล',
+  },
+  {
+    id: 'scenario_detective',
+    title: 'Detective & Mystery Quest',
+    badge: 'สืบสวน & เบาะแส',
+    badgeColor: 'success',
+    icon: 'mdi-incognito',
+    iconColor: 'success',
+    bgColor: 'green-lighten-5',
+    description: 'สวมบทบาทนักสืบหรือผู้เชี่ยวชาญ ค้นหาหลักฐาน สัมภาษณ์พยาน และเลือกตัดสินใจเพื่อคลี่คลายเงื่อนงำในบทเรียน',
+  },
+  {
+    id: 'sorting_dragdrop',
+    title: 'Puzzle & Category Drag-Drop',
+    badge: 'คัดแยก & จัดหมวดหมู่',
+    badgeColor: 'secondary',
+    icon: 'mdi-drag-variant',
+    iconColor: 'secondary',
+    bgColor: 'cyan-lighten-5',
+    description: 'ลากวางจับคู่ คัดแยกกลุ่มสิ่งของ และจัดระเบียบองค์ประกอบบทเรียนลงกล่องเป้าหมาย เล่นได้ตามจังหวะตนเองโดยไม่กดดันเรื่องเวลา',
+  },
+  {
+    id: 'visual_novel',
+    title: 'Interactive Visual Novel',
+    badge: 'เนื้อเรื่อง & ตอนจบหลายแบบ',
+    badgeColor: 'indigo',
+    icon: 'mdi-book-open-page-variant',
+    iconColor: 'indigo',
+    bgColor: 'indigo-lighten-5',
+    description: 'ดำเนินเรื่องราวเข้มข้น ตอบคำถามเชิงตรรกะและสถานการณ์ ทุกการตัดสินใจส่งผลต่อตอนจบหลายรูปแบบ (Multiple Endings)',
+  },
+]
+
+// Distinct game genres for Online / Classroom Live (Kahoot style)
+const multiplayerLiveGenres = [
+  {
+    id: 'live_quiz',
+    title: 'Live Speed Quiz Arena (Kahoot Style)',
+    badge: 'ประชันความเร็วขึ้นจอ',
+    badgeColor: 'warning',
+    icon: 'mdi-lightning-bolt',
+    iconColor: 'warning',
+    bgColor: 'amber-lighten-5',
+    description: 'คำถามขึ้นจอใหญ่หน้าห้อง นักเรียนกดปุ่ม 4 สีจากมือถือเพื่อแข่งความเร็ว มีเวลานับถอยหลัง โบนัสความเร็ว และตารางคะแนนสด',
+  },
+  {
+    id: 'team_battle',
+    title: 'Classroom Team Battle (ศึกประลองแบ่งทีม)',
+    badge: 'สร้างความสามัคคี',
+    badgeColor: 'error',
+    icon: 'mdi-shield-sword',
+    iconColor: 'error',
+    bgColor: 'red-lighten-5',
+    description: 'ระบบแบ่งนักเรียนในห้องเป็น 2-4 ทีม ทุกคนในทีมช่วยกันตอบโจทย์เพื่อสะสมคะแนนรวมโจมตีปราสาท หรือชักเย่อแต้มไปฝั่งตนเอง',
+  },
+  {
+    id: 'battle_royale',
+    title: 'Survival Battle Royale (ศึกเอาชีวิตรอดคนสุดท้าย)',
+    badge: 'ลุ้นระทึก & ท้าทาย',
+    badgeColor: 'deep-orange',
+    icon: 'mdi-crown',
+    iconColor: 'deep-orange',
+    bgColor: 'orange-lighten-5',
+    description: 'แข่งขันตอบคำถามเป็นระลอก ใครตอบผิดจะเสียหัวใจและตกรอบ ผู้ที่ตอบถูกและยืนหยัดเป็นคนสุดท้ายในห้องเรียนจะเป็นแชมป์ประจำคาบ',
+  },
+  {
+    id: 'board_game_live',
+    title: 'Live Board Game / Jeopardy Challenge',
+    badge: 'บอร์ดเกมเปิดป้ายชิงแต้ม',
+    badgeColor: 'teal',
+    icon: 'mdi-view-grid-plus',
+    iconColor: 'teal',
+    bgColor: 'teal-lighten-5',
+    description: 'บอร์ดเกมกระดานคะแนนแบ่งตามหมวดหมู่วิชา สลับกันเลือกข้อคำถามระดับความยาก และชิงกดปุ่ม Buzz-In เพื่อตอบชิงคะแนนสูงสุด',
+  },
+]
+
+// Dynamically return genres based on chosen game mode
+const activeGameGenres = computed(() => {
+  return gameMode.value === 'single' ? singlePlayerGenres : multiplayerLiveGenres
+})
+
+function selectGameMode(mode: 'single' | 'multiplayer_live') {
+  gameMode.value = mode
+  const validIds = (mode === 'single' ? singlePlayerGenres : multiplayerLiveGenres).map(g => g.id)
+  if (!validIds.includes(gameGenre.value)) {
+    gameGenre.value = validIds[0]
+  }
+}
+
 const topicPresets = [
-  { title: 'ภารกิจโรงเรียนไร้ขยะ', subject: 'วิทยาศาสตร์และสิ่งแวดล้อม', desc: 'การคัดแยกขยะ 4 ประเภทและการรีไซเคิล', genre: 'rpg_quest', theme: 'school' },
-  { title: 'การเดินทางของสารอาหาร', subject: 'ชีววิทยา', desc: 'ระบบย่อยอาหารและการดูดซึมสารอาหารในร่างกาย', genre: 'rpg_quest', theme: 'scifi' },
-  { title: 'ศึกชิงเมืองตรรกศาสตร์', subject: 'คณิตศาสตร์และคอมพิวเตอร์', desc: 'การคิดเชิงคำนวณและประพจน์จริง/เท็จ', genre: 'rpg_quest', theme: 'fantasy' },
-  { title: 'English Everyday Hero', subject: 'ภาษาต่างประเทศ', desc: 'บทสนทนาสถานการณ์จริงและการสื่อสาร', genre: 'scenario_detective', theme: 'school' },
+  { title: 'ภารกิจโรงเรียนไร้ขยะ (RPG)', subject: 'วิทยาศาสตร์และสิ่งแวดล้อม', desc: 'การคัดแยกขยะ 4 ประเภทและการรีไซเคิลแบบผจญภัย', mode: 'single' as const, genre: 'rpg_quest', theme: 'school' },
+  { title: 'ประชันความเร็ววิทย์รอบตัว (Live Kahoot)', subject: 'วิทยาศาสตร์ทั่วไป', desc: 'ตอบคำถามความเร็วชิงแชมป์ประจำสัปดาห์ขึ้นจอใหญ่', mode: 'multiplayer_live' as const, genre: 'live_quiz', theme: 'scifi' },
+  { title: 'ศึกชิงเมืองตรรกศาสตร์ (Team Battle)', subject: 'คณิตศาสตร์และคอมพิวเตอร์', desc: 'การคิดเชิงคำนวณและประพจน์จริง/เท็จแบบแบ่งทีม', mode: 'multiplayer_live' as const, genre: 'team_battle', theme: 'fantasy' },
+  { title: 'English Detective in Town (สืบสวน)', subject: 'ภาษาต่างประเทศ', desc: 'สืบสวนหาเบาะแสและบทสนทนาสถานการณ์จริง', mode: 'single' as const, genre: 'scenario_detective', theme: 'school' },
 ]
 
 function applyPreset(p: any) {
   title.value = p.title
   subject.value = p.subject
   description.value = p.desc
+  selectGameMode(p.mode)
   gameGenre.value = p.genre
   themePack.value = p.theme
 }
-
-const gameGenres = [
-  {
-    id: 'rpg_quest',
-    title: '2D RPG Turn-Based Quest',
-    badge: 'ยอดนิยม',
-    badgeColor: 'primary',
-    icon: 'mdi-sword-cross',
-    iconColor: 'primary',
-    bgColor: 'purple-lighten-5',
-    description: 'สวมบทบาทผู้กล้า เดินสำรวจรับเควสต์ ตอบคำถามวิชาการเพื่อปล่อยเวทมนตร์โจมตีมอนสเตอร์',
-  },
-  {
-    id: 'live_quiz',
-    title: 'Live Speed Quiz (Kahoot)',
-    badge: 'เล่นสดในห้อง',
-    badgeColor: 'warning',
-    icon: 'mdi-lightning-bolt',
-    iconColor: 'warning',
-    bgColor: 'amber-lighten-5',
-    description: 'คำถามประชันความเร็วขึ้นจอใหญ่ แข่งขันชิงอันดับ Leaderboard คะแนนเรียลไทม์',
-  },
-  {
-    id: 'scenario_detective',
-    title: 'Scenario & Detective Story',
-    badge: 'เน้นคิดวิเคราะห์',
-    badgeColor: 'success',
-    icon: 'mdi-incognito',
-    iconColor: 'success',
-    bgColor: 'green-lighten-5',
-    description: 'จำลองสถานการณ์และบทสนทนา เลือกทางแยกการตัดสินใจเพื่อคลี่คลายเงื่อนงำในบทเรียน',
-  },
-  {
-    id: 'sorting_dragdrop',
-    title: 'Sorting & Drag-Drop Quest',
-    badge: 'สนุกเข้าใจง่าย',
-    badgeColor: 'secondary',
-    icon: 'mdi-drag-variant',
-    iconColor: 'secondary',
-    bgColor: 'cyan-lighten-5',
-    description: 'ลากวางจับคู่ คัดแยกกลุ่มสิ่งของ และจัดระเบียบองค์ประกอบบทเรียนลงกล่องเป้าหมาย',
-  },
-]
 
 const themePacks = [
   {

@@ -473,27 +473,76 @@ class AIService
             ],
         ];
 
+        $gameMode = $project->game_mode ?: 'single';
+        $gameGenre = $project->game_genre ?: ($project->ideate?->game_genre ?: 'rpg_quest');
+
+        // Mode and Genre specific configurations
+        $modeSettings = [
+            'duration' => $duration,
+            'maxAttempts' => 3,
+            'allowSound' => true,
+            'passingScore' => 60,
+        ];
+
+        if ($gameMode === 'multiplayer_live') {
+            $modeSettings['isLiveRoom'] = true;
+            $modeSettings['countdownPerQuestion'] = 15;
+            $modeSettings['streakMultiplier'] = true;
+            $modeSettings['showLeaderboard'] = true;
+            $modeSettings['kahootColors'] = ['#e21b3c', '#1368ce', '#d89e00', '#26890c'];
+
+            if ($gameGenre === 'team_battle') {
+                $modeSettings['teamMode'] = true;
+                $modeSettings['teams'] = ['ทีมพญาอินทรี', 'ทีมมังกรทอง'];
+                $modeSettings['castleHp'] = 500;
+            } elseif ($gameGenre === 'battle_royale') {
+                $modeSettings['survivalMode'] = true;
+                $modeSettings['livesPerPlayer'] = 3;
+                $modeSettings['suddenDeath'] = true;
+            } elseif ($gameGenre === 'board_game_live') {
+                $modeSettings['boardTiles'] = 9;
+                $modeSettings['buzzerMode'] = true;
+            }
+        } else {
+            $modeSettings['isLiveRoom'] = false;
+            $modeSettings['selfPaced'] = true;
+
+            if ($gameGenre === 'rpg_quest') {
+                $modeSettings['turnBasedCombat'] = true;
+                $modeSettings['playerHp'] = 100;
+                $modeSettings['bossHp'] = 100;
+                $modeSettings['combatSkills'] = ['เวทปัญญา', 'เกราะตรรกะ', 'ฟื้นฟูสมาธิ'];
+            } elseif ($gameGenre === 'scenario_detective') {
+                $modeSettings['investigationClues'] = 3;
+                $modeSettings['evidenceNotebook'] = true;
+                $modeSettings['witnessDialogue'] = true;
+            } elseif ($gameGenre === 'sorting_dragdrop') {
+                $modeSettings['dragDropCategories'] = 3;
+                $modeSettings['puzzleRelaxMode'] = true;
+            } elseif ($gameGenre === 'visual_novel') {
+                $modeSettings['branchingStory'] = true;
+                $modeSettings['multipleEndings'] = ['ยอดเยี่ยมนักปราชญ์', 'ผู้ช่วยกอบกู้เมือง', 'ลองใหม่อีกครั้ง'];
+            }
+        }
+
         return [
             'version' => '1.0',
             'title' => $title,
             'description' => $desc,
+            'mode' => $gameMode,
             'theme' => $theme,
             'genre' => $gameGenre,
-            'settings' => [
-                'duration' => $duration,
-                'maxAttempts' => 3,
-                'allowSound' => true,
-                'passingScore' => 60,
-            ],
+            'settings' => $modeSettings,
             'scenes' => $scenes,
             'scoring' => [
                 'initialScore' => 0,
                 'maxScore' => 100,
                 'passingScore' => 60,
+                'speedBonus' => ($gameMode === 'multiplayer_live'),
             ],
             'completion' => [
-                'type' => 'mission_complete',
-                'rewardTitle' => 'Master Badge',
+                'type' => $gameMode === 'multiplayer_live' ? 'podium_finish' : 'mission_complete',
+                'rewardTitle' => $gameMode === 'multiplayer_live' ? 'Champion Cup' : 'Master Badge',
             ],
         ];
     }
