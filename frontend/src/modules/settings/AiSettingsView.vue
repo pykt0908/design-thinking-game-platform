@@ -5,15 +5,7 @@
       <p class="text-body-2 text-grey">กำหนด AI Provider, เลือก Model และ API Key ของคุณเองสำหรับการสร้างและวิเคราะห์เกม</p>
     </div>
 
-    <!-- Security Info Card per spec Section 23 -->
-    <v-alert variant="tonal" color="primary" class="mb-6 rounded-xl">
-      <div class="d-flex align-center">
-        <v-icon icon="mdi-shield-lock-outline" class="mr-3" size="24"></v-icon>
-        <div class="text-caption">
-          <strong>ความปลอดภัยสูง:</strong> API Key ของคุณจะถูกเข้ารหัสผ่าน AES-256 ในฐานข้อมูล และจะไม่ถูกส่งกลับมายังหน้าเว็บเด็ดขาด
-        </div>
-      </div>
-    </v-alert>
+    
 
     <v-card class="pa-6 border-card rounded-xl mb-6">
       <h2 class="text-h6 font-weight-bold text-slate-800 mb-4">กำหนดค่า AI Service</h2>

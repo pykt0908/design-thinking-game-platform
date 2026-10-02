@@ -8,9 +8,7 @@
 
           <div class="position-relative z-10">
             <div class="d-flex align-center mb-4">
-              <v-avatar size="44" class="bg-white elevation-2 mr-3">
-                <v-icon icon="mdi-gamepad-variant-outline" color="primary" size="26"></v-icon>
-              </v-avatar>
+              <img src="/logo.png" alt="DTG Logo" class="rounded-circle mr-3 elevation-3" style="width: 44px; height: 44px; object-fit: contain;" />
               <div>
                 <div class="text-subtitle-1 font-weight-bold">Design Thinking Studio</div>
                 <div class="text-caption text-purple-lighten-4">Educational Web Game Platform</div>

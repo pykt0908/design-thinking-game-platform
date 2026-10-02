@@ -3,11 +3,9 @@
     <v-app-bar flat height="64" class="border-b" color="surface">
       <v-container class="d-flex align-center py-0">
         <div class="d-flex align-center mr-8">
-          <v-avatar size="36" class="ai-gradient-bg mr-3">
-            <v-icon icon="mdi-gamepad-variant" color="white" size="20"></v-icon>
-          </v-avatar>
+          <img src="/logo.png" alt="DTG Logo" class="mr-3 rounded-circle" style="width: 36px; height: 36px; object-fit: contain;" />
           <span class="font-weight-bold text-subtitle-1 text-slate-800">
-            DTG <span class="text-primary">Student</span>
+            DTG <span class="text-primary font-weight-bold">Student</span>
           </span>
         </div>
 

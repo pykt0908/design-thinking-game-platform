@@ -5,9 +5,7 @@
       <v-app-bar-nav-icon @click="drawer = !drawer" color="on-surface-variant"></v-app-bar-nav-icon>
 
       <div class="d-flex align-center ml-2">
-        <v-avatar size="36" class="ai-gradient-bg mr-3">
-          <v-icon icon="mdi-gamepad-variant-outline" color="white" size="20"></v-icon>
-        </v-avatar>
+        <img src="/logo.png" alt="DTG Studio Logo" class="mr-3 rounded-circle" style="width: 36px; height: 36px; object-fit: contain;" />
         <span class="font-weight-bold text-subtitle-1 text-slate-800">
           Design Thinking <span class="ai-gradient-text font-weight-bold">Game Studio</span>
         </span>
