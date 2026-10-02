@@ -74,13 +74,15 @@
             </v-btn>
 
             <v-btn
-              variant="text"
+              variant="tonal"
               size="small"
-              color="grey-darken-2"
+              color="primary"
               rounded="lg"
-              append-icon="mdi-arrow-right"
+              prepend-icon="mdi-account-group"
+              class="font-weight-medium"
+              @click="openStudentsDialog(c)"
             >
-              รายชื่อนักเรียน
+              รายชื่อนักเรียน ({{ c.students?.length || 0 }})
             </v-btn>
           </div>
         </v-card>
@@ -163,11 +165,144 @@
         </v-form>
       </v-card>
     </v-dialog>
+
+    <!-- View Classroom Students Dialog -->
+    <v-dialog v-model="showStudentsDialog" max-width="680" scrollable>
+      <v-card v-if="selectedClassroomForStudents" class="rounded-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="pa-5 bg-purple-lighten-5 border-b d-flex justify-space-between align-center">
+          <div class="d-flex align-center">
+            <v-avatar size="44" color="white" class="mr-3 elevation-1">
+              <v-icon icon="mdi-account-school" color="primary" size="24"></v-icon>
+            </v-avatar>
+            <div>
+              <div class="d-flex align-center gap-2">
+                <h2 class="text-h6 font-weight-bold text-slate-900 mb-0">
+                  {{ selectedClassroomForStudents.name }}
+                </h2>
+                <v-chip size="x-small" color="primary" variant="flat" class="font-weight-bold">
+                  {{ selectedClassroomForStudents.students?.length || 0 }} คน
+                </v-chip>
+              </div>
+              <div class="text-caption text-grey-darken-1">
+                ปีการศึกษา {{ selectedClassroomForStudents.academic_year || '2569' }}/{{ selectedClassroomForStudents.semester || '1' }}
+                &bull; รหัสเข้าร่วม: <strong class="text-primary">{{ selectedClassroomForStudents.code }}</strong>
+              </div>
+            </div>
+          </div>
+          <v-btn icon="mdi-close" variant="text" size="small" @click="showStudentsDialog = false"></v-btn>
+        </div>
+
+        <!-- Body -->
+        <v-card-text class="pa-5" style="max-height: 480px;">
+          <!-- Search & Filter -->
+          <div class="mb-4">
+            <v-text-field
+              v-model="studentSearchQuery"
+              placeholder="ค้นหาตามชื่อ, รหัสนักเรียน หรืออีเมล..."
+              prepend-inner-icon="mdi-magnify"
+              density="compact"
+              hide-details
+              rounded="lg"
+              variant="outlined"
+              class="bg-white"
+              clearable
+            ></v-text-field>
+          </div>
+
+          <!-- Students List -->
+          <div v-if="filteredStudents.length > 0" class="d-flex flex-column gap-2">
+            <v-card
+              v-for="s in filteredStudents"
+              :key="s.id"
+              class="pa-3 border rounded-xl d-flex justify-space-between align-center bg-white hover-card"
+            >
+              <div class="d-flex align-center">
+                <v-avatar size="40" color="purple-lighten-4" class="mr-3 text-primary font-weight-bold">
+                  {{ s.name?.charAt(0) || 'S' }}
+                </v-avatar>
+                <div>
+                  <div class="font-weight-bold text-slate-800 text-subtitle-2 d-flex align-center">
+                    <span>{{ s.name }}</span>
+                    <v-chip
+                      v-if="s.student_id"
+                      size="x-small"
+                      color="secondary"
+                      variant="tonal"
+                      class="ml-2 font-weight-bold"
+                    >
+                      รหัส: {{ s.student_id }}
+                    </v-chip>
+                  </div>
+                  <div class="text-caption text-grey">
+                    {{ s.email }}
+                    <span v-if="(s as any)?.pivot?.joined_at">
+                      &bull; เข้าร่วมเมื่อ {{ formatDate((s as any).pivot.joined_at) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex align-center">
+                <v-chip size="small" color="success" variant="tonal" class="font-weight-bold">
+                  <v-icon icon="mdi-check-circle-outline" size="14" class="mr-1"></v-icon>
+                  เข้าเรียนแล้ว
+                </v-chip>
+              </div>
+            </v-card>
+          </div>
+
+          <!-- Search No Result -->
+          <div v-else-if="studentSearchQuery" class="text-center pa-8 text-grey">
+            <v-icon icon="mdi-account-search" size="48" color="grey-lighten-1" class="mb-2"></v-icon>
+            <div>ไม่พบนักเรียนที่ตรงกับคำค้นหา "{{ studentSearchQuery }}"</div>
+          </div>
+
+          <!-- Empty State: No students joined yet -->
+          <div v-else class="text-center pa-8 border rounded-2xl bg-purple-lighten-5">
+            <v-avatar size="56" color="white" class="mb-3 elevation-2">
+              <v-icon icon="mdi-account-plus-outline" size="32" color="primary"></v-icon>
+            </v-avatar>
+            <h3 class="text-subtitle-1 font-weight-bold text-slate-800 mb-1">
+              ยังไม่มีนักเรียนเข้าร่วมห้องเรียนนี้
+            </h3>
+            <p class="text-caption text-slate-600 mb-4 max-w-md mx-auto">
+              ส่งรหัสห้องเรียนด้านล่างให้นักเรียน เพื่อใช้กรอกเข้าร่วมผ่านหน้าแรกของนักเรียน
+            </p>
+            <v-sheet color="white" rounded="xl" class="pa-3 d-inline-flex align-center gap-3 border elevation-1">
+              <div class="text-left px-2">
+                <div class="text-caption text-grey">รหัสห้องเรียน (Join Code)</div>
+                <div class="text-h6 font-weight-bold text-primary tracking-wider">
+                  {{ selectedClassroomForStudents.code }}
+                </div>
+              </div>
+              <v-btn
+                color="primary"
+                rounded="lg"
+                size="small"
+                class="font-weight-bold"
+                prepend-icon="mdi-content-copy"
+                @click="copyJoinCode(selectedClassroomForStudents.code)"
+              >
+                คัดลอกรหัส
+              </v-btn>
+            </v-sheet>
+          </div>
+        </v-card-text>
+
+        <!-- Footer -->
+        <div class="pa-4 border-t d-flex justify-end bg-grey-lighten-5">
+          <v-btn variant="outlined" rounded="lg" color="grey-darken-1" @click="showStudentsDialog = false">
+            ปิด
+          </v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import apiClient from '@/api/client'
 import type { Classroom, Game } from '@/types'
 
@@ -188,6 +323,53 @@ const targetClassroom = ref<Classroom | null>(null)
 const assignGameId = ref<number | null>(null)
 const assignPassingScore = ref(60)
 const assigning = ref(false)
+
+// Students Dialog
+const showStudentsDialog = ref(false)
+const selectedClassroomForStudents = ref<Classroom | null>(null)
+const studentSearchQuery = ref('')
+
+const filteredStudents = computed(() => {
+  const students = selectedClassroomForStudents.value?.students || []
+  if (!studentSearchQuery.value) return students
+  const q = studentSearchQuery.value.toLowerCase().trim()
+  return students.filter(s =>
+    s.name?.toLowerCase().includes(q) ||
+    s.email?.toLowerCase().includes(q) ||
+    (s.student_id && s.student_id.toLowerCase().includes(q))
+  )
+})
+
+async function openStudentsDialog(c: Classroom) {
+  selectedClassroomForStudents.value = c
+  studentSearchQuery.value = ''
+  showStudentsDialog.value = true
+  try {
+    const { data } = await apiClient.get(`/classrooms/${c.id}`)
+    selectedClassroomForStudents.value = data
+    // Update students count in classrooms array
+    const idx = classrooms.value.findIndex(item => item.id === c.id)
+    if (idx !== -1) {
+      classrooms.value[idx] = data
+    }
+  } catch (err) {
+    console.error('Failed to load classroom details', err)
+  }
+}
+
+function formatDate(dateStr?: string) {
+  if (!dateStr) return '-'
+  try {
+    const d = new Date(dateStr)
+    return d.toLocaleDateString('th-TH', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  } catch {
+    return dateStr
+  }
+}
 
 async function loadData() {
   const [cRes, gRes] = await Promise.all([
