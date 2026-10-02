@@ -1,3 +1,62 @@
+/* ==========================================================================
+   LINE Seed Sans TH Font Declarations
+   ========================================================================== */
+@font-face {
+  font-family: 'LINESeedSansTH';
+  src: url('./assets/fonts/lineseed/LINESeedSansTH_W_Th.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LINESeedSansTH';
+  src: url('./assets/fonts/lineseed/LINESeedSansTH_W_Rg.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LINESeedSansTH';
+  src: url('./assets/fonts/lineseed/LINESeedSansTH_W_Rg.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LINESeedSansTH';
+  src: url('./assets/fonts/lineseed/LINESeedSansTH_W_Bd.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LINESeedSansTH';
+  src: url('./assets/fonts/lineseed/LINESeedSansTH_W_Bd.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LINESeedSansTH';
+  src: url('./assets/fonts/lineseed/LINESeedSansTH_W_XBd.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LINESeedSansTH';
+  src: url('./assets/fonts/lineseed/LINESeedSansTH_W_He.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --primary-color: #3d0066;
   --secondary-color: #c670ff;
@@ -8,19 +67,52 @@
   --text-muted: #6b5b7b;
   --border-color: #edd4f8;
   --bg-color: #faf7fd;
+  --font-family-base: 'LINESeedSansTH', 'Anuphan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
-  font-family: 'Anuphan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-family-base);
 }
 
-body {
+body, html, .v-application {
   margin: 0;
   padding: 0;
   background-color: var(--bg-color);
   color: var(--text-main);
+  font-family: var(--font-family-base) !important;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Vuetify Typography Override to ensure LINESeedSansTH applies everywhere */
+.v-application,
+.v-application .text-h1,
+.v-application .text-h2,
+.v-application .text-h3,
+.v-application .text-h4,
+.v-application .text-h5,
+.v-application .text-h6,
+.v-application .text-subtitle-1,
+.v-application .text-subtitle-2,
+.v-application .text-body-1,
+.v-application .text-body-2,
+.v-application .text-button,
+.v-application .text-caption,
+.v-application .text-overline,
+.v-btn,
+.v-chip,
+.v-input,
+.v-field,
+.v-select,
+.v-card,
+.v-list-item,
+.v-list-item-title,
+.v-list-item-subtitle,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-family-base) !important;
 }
 
 /* Card border */

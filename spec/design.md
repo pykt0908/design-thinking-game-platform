@@ -215,27 +215,30 @@ AI Feature สามารถใช้ Gradient
 
 # 6. Typography
 
-ภาษาไทยแนะนำ
+Font หลักของระบบ:
 
 ```text
-Anuphan
+LINE Seed Sans TH (LINESeedSansTH)
 ```
 
 Fallback:
 
 ```text
+LINESeedSansTH,
 Anuphan,
 Noto Sans Thai,
 sans-serif
 ```
 
-Font Weight:
+Font Weight ที่รองรับ:
 
 ```text
-400 Regular
-500 Medium
-600 SemiBold
-700 Bold
+300 Thin        (LINESeedSansTH_W_Th.woff2)
+400 Regular     (LINESeedSansTH_W_Rg.woff2)
+500/600 SemiBold (LINESeedSansTH_W_Bd.woff2)
+700 Bold        (LINESeedSansTH_W_Bd.woff2)
+800 ExtraBold   (LINESeedSansTH_W_XBd.woff2)
+900 Heavy       (LINESeedSansTH_W_He.woff2)
 ```
 
 ---
