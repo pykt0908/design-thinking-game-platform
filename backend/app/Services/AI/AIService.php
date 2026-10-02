@@ -361,7 +361,7 @@ class AIService
         $desc = $project->description ?: 'เกมการเรียนรู้ผ่านกระบวนการ Design Thinking';
         $subject = $project->subject ?: 'ทั่วไป';
         $theme = $project->ideate?->theme ?: 'school';
-        $gameGenre = $project->ideate?->game_genre ?: 'Scenario & Quiz';
+        $gameGenre = $project->game_genre ?: ($project->ideate?->game_genre ?: 'rpg_quest');
         $duration = ($project->ideate?->duration_minutes ?: 10) * 60;
 
         $objectives = $project->define?->learning_objectives ?? [

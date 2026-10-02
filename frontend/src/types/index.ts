@@ -176,6 +176,8 @@ export interface GameSchema {
     maxAttempts: number
     allowSound?: boolean
     passingScore?: number
+    turnBasedCombat?: boolean
+    [key: string]: any
   }
   scenes: GameScene[]
   scoring: {

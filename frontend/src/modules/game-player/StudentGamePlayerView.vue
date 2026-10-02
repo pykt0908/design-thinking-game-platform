@@ -135,7 +135,178 @@
               </div>
             </div>
 
-            <!-- 2. Question / Quiz Element -->
+            <!-- 2. Question / Combat Element: RPG Turn-Based Battle Mode -->
+            <div v-else-if="el.type === 'question' && isRpgMode" class="rpg-battle-arena w-100 max-w-2xl animate-fade-in">
+              <!-- Combat Stage Header Banner -->
+              <div class="rpg-stage-header d-flex justify-space-between align-center mb-4 px-4 py-2 rounded-xl">
+                <div class="d-flex align-center gap-2">
+                  <span class="battle-badge">⚔️ 2D RPG BATTLE</span>
+                  <span class="text-caption text-grey-lighten-1 font-weight-bold">STAGE {{ currentSceneIndex }} / {{ schema?.scenes ? schema.scenes.length - 1 : 3 }}</span>
+                </div>
+                <div class="text-caption text-amber-accent-2 font-weight-bold d-flex align-center gap-1">
+                  <v-icon icon="mdi-sword-cross" size="14"></v-icon>
+                  <span>โหมดการต่อสู้ผลัดกันโจมตี (Turn-Based Combat)</span>
+                </div>
+              </div>
+
+              <!-- Combat Battlefield (Hero vs Boss) -->
+              <div class="battlefield-card pa-6 rounded-2xl mb-4 position-relative overflow-hidden">
+                <div class="battle-grid-overlay"></div>
+
+                <!-- Floating Combat Damage Text -->
+                <transition name="damage-pop">
+                  <div v-if="combatText" class="floating-damage-text" :class="combatEffectType">
+                    {{ combatText }}
+                  </div>
+                </transition>
+
+                <div class="d-flex justify-space-between align-center position-relative" style="z-index: 2;">
+                  <!-- Hero Unit (Left) -->
+                  <div class="fighter-unit hero-unit d-flex flex-column align-center" :class="{ 'hero-lunging': isHeroAttacking, 'unit-hit': isHeroHit }">
+                    <div class="unit-avatar-wrapper position-relative mb-2">
+                      <v-avatar size="84" class="elevation-6 hero-avatar-border">
+                        <v-img src="https://api.dicebear.com/7.x/adventurer/svg?seed=FelixWarrior&backgroundColor=b6e3f4"></v-img>
+                      </v-avatar>
+                      <span class="unit-lvl-badge">Lv. 5</span>
+                    </div>
+                    <div class="unit-name font-weight-bold text-white mb-1">ผู้กล้าแห่งปัญญา</div>
+                    <div class="unit-class text-caption text-cyan-accent-2 mb-2">Design Hero</div>
+
+                    <!-- Hero HP Bar -->
+                    <div class="hp-gauge-container w-100">
+                      <div class="d-flex justify-space-between text-caption font-weight-bold mb-1">
+                        <span class="text-green-accent-3">HERO HP</span>
+                        <span class="text-white">{{ heroHp }}/100</span>
+                      </div>
+                      <div class="hp-track">
+                        <div class="hp-fill hero-hp-fill" :style="{ width: `${Math.max(0, heroHp)}%` }"></div>
+                      </div>
+                    </div>
+
+                    <!-- Hero MP Bar -->
+                    <div class="mp-gauge-container w-100 mt-1">
+                      <div class="d-flex justify-space-between text-caption font-weight-bold mb-1">
+                        <span class="text-light-blue-accent-2">MP</span>
+                        <span class="text-grey-lighten-2">80/100</span>
+                      </div>
+                      <div class="mp-track">
+                        <div class="mp-fill" style="width: 80%;"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Center Clash Crest -->
+                  <div class="vs-clash-column d-flex flex-column align-center px-4">
+                    <div class="vs-emblem mb-2">VS</div>
+                    <div class="turn-indicator font-weight-bold text-caption text-uppercase px-3 py-1 rounded-pill">
+                      ⚔️ เลือกวิชาโจมตี
+                    </div>
+                  </div>
+
+                  <!-- Boss Unit (Right) -->
+                  <div class="fighter-unit boss-unit d-flex flex-column align-center" :class="{ 'unit-hit': isBossHit }">
+                    <div class="unit-avatar-wrapper position-relative mb-2">
+                      <v-avatar size="84" class="elevation-6 boss-avatar-border">
+                        <v-img :src="getBossAvatar(currentSceneIndex)"></v-img>
+                      </v-avatar>
+                      <span class="boss-lvl-badge">BOSS</span>
+                    </div>
+                    <div class="unit-name font-weight-bold text-white mb-1 text-center" style="max-width: 140px; font-size: 13px;">
+                      {{ getBossName(currentSceneIndex) }}
+                    </div>
+                    <div class="unit-class text-caption text-red-accent-2 mb-2">Arch-Nemesis</div>
+
+                    <!-- Boss HP Bar -->
+                    <div class="hp-gauge-container w-100">
+                      <div class="d-flex justify-space-between text-caption font-weight-bold mb-1">
+                        <span class="text-red-accent-2">BOSS HP</span>
+                        <span class="text-white">{{ bossHp }}/100</span>
+                      </div>
+                      <div class="hp-track">
+                        <div class="hp-fill boss-hp-fill" :style="{ width: `${Math.max(0, bossHp)}%` }"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Boss Question / Battle Challenge -->
+              <div class="rpg-question-scroll pa-5 rounded-2xl mb-4 elevation-3">
+                <div class="d-flex align-center gap-2 mb-2 text-amber-lighten-3 font-weight-bold text-caption">
+                  <v-icon icon="mdi-shield-sword" size="18" color="amber"></v-icon>
+                  <span>คาถาคำถามท้าทาย (+{{ el.points || 30 }} EXP)</span>
+                </div>
+                <div class="rpg-question-title text-h6 font-weight-bold text-white mb-3">
+                  {{ el.question }}
+                </div>
+                <div v-if="el.image" class="mb-3 text-center">
+                  <img :src="el.image" class="rounded-xl border-card" style="max-height: 160px; max-width: 100%; object-fit: cover;" />
+                </div>
+              </div>
+
+              <!-- RPG Action Command Spell Deck -->
+              <div class="spell-actions-grid mb-4">
+                <button
+                  v-for="(opt, idx) in el.options"
+                  :key="opt.id"
+                  class="spell-command-btn text-left pa-4 rounded-xl d-flex align-center justify-space-between transition-all"
+                  :class="getRpgOptionClasses(opt, el.id)"
+                  :disabled="answeredQuestions[el.id] !== undefined"
+                  @click="handleRpgSelectOption(el, opt)"
+                >
+                  <div class="d-flex align-center gap-3">
+                    <div class="spell-icon-badge" :class="'spell-slot-' + (idx % 4)">
+                      {{ ['⚔️', '⚡', '🛡️', '🔮'][idx % 4] }}
+                    </div>
+                    <div>
+                      <div class="text-caption text-grey-lighten-1 font-weight-bold">
+                        {{ ['วิชาฟาดฟันตรรกะ', 'สายฟ้าสังเคราะห์', 'เกราะทดสอบความจริง', 'มนตราปัญญาญาณ'][idx % 4] }}
+                      </div>
+                      <div class="text-body-2 font-weight-medium text-white">{{ opt.text }}</div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-center">
+                    <v-icon
+                      v-if="answeredQuestions[el.id] !== undefined && opt.isCorrect"
+                      icon="mdi-check-circle"
+                      color="success"
+                      size="24"
+                    ></v-icon>
+                    <v-icon
+                      v-else-if="selectedAnswers[el.id] === opt.id && !opt.isCorrect"
+                      icon="mdi-close-circle"
+                      color="error"
+                      size="24"
+                    ></v-icon>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Combat Battle Feedback & Next Turn Button -->
+              <div v-if="answeredQuestions[el.id]" class="combat-feedback-box pa-4 rounded-xl animate-fade-in" :class="answeredQuestions[el.id].is_correct ? 'feedback-victory' : 'feedback-defeat'">
+                <div class="d-flex align-center font-weight-bold text-subtitle-2 mb-1" :class="answeredQuestions[el.id].is_correct ? 'text-green-accent-3' : 'text-amber-accent-2'">
+                  <v-icon :icon="answeredQuestions[el.id].is_correct ? 'mdi-sword-cross' : 'mdi-shield-alert'" class="mr-2"></v-icon>
+                  <span>{{ answeredQuestions[el.id].is_correct ? 'โจมตีสำเร็จ! คริติคอลโดนจุดอ่อนของศัตรู (+ ' + (el.points || 30) + ' แต้ม)' : 'ถูกบอสสะท้อนการโจมตี!' }}</span>
+                </div>
+                <div class="text-body-2 text-grey-lighten-2 mb-3">
+                  {{ answeredQuestions[el.id].explanation || el.explanation || 'ศึกษาตรรกะนี้เพื่อเตรียมพร้อมรับมือการโจมตีถัดไป!' }}
+                </div>
+
+                <div class="d-flex justify-end">
+                  <v-btn
+                    class="ai-gradient-bg text-white font-weight-bold px-6"
+                    rounded="lg"
+                    size="default"
+                    @click="goToNextRpgStage(el.nextScene)"
+                  >
+                    {{ currentSceneIndex < (schema?.scenes?.length || 1) - 1 ? 'รุกคืบสู่ด่านถัดไป ➔' : 'พิชิตบอสสำเร็จ ดูสรุปผล 🏆' }}
+                  </v-btn>
+                </div>
+              </div>
+            </div>
+
+            <!-- Standard Quiz Question Element (Non-RPG) -->
             <div v-else-if="el.type === 'question'" class="quiz-box w-100 pa-6 rounded-2xl bg-white elevation-3 border-card">
               <div class="d-flex justify-space-between align-center mb-3">
                 <v-chip size="small" color="primary" variant="flat" class="font-weight-medium">
@@ -243,6 +414,98 @@ const timeRemaining = ref(300)
 const durationSpent = ref(0)
 const isGameComplete = ref(false)
 const correctAnswersCount = ref(0)
+
+// 2D RPG Battle State
+const heroHp = ref(100)
+const bossHp = ref(100)
+const isHeroAttacking = ref(false)
+const isBossHit = ref(false)
+const isHeroHit = ref(false)
+const combatText = ref('')
+const combatEffectType = ref<'hero_crit' | 'boss_crit' | 'normal' | ''>('')
+
+const isRpgMode = computed(() => {
+  if (!schema.value) return false
+  const g = (schema.value.genre || '').toLowerCase()
+  return g === 'rpg_quest' || g.includes('rpg') || schema.value.settings?.turnBasedCombat === true
+})
+
+function getBossName(sceneIdx: number) {
+  const bosses = [
+    'โกเลมเงามืดแห่งความไม่รู้ (Shadow Golem)',
+    'อสูรพิทักษ์มิติตรรกะ (Logic Beast)',
+    'ราชามังกรแห่งบททดสอบ (Archdragon Boss)',
+    'จอมมารบั๊ก & ลูปอนันต์ (Bug Overlord)'
+  ]
+  return bosses[sceneIdx % bosses.length]
+}
+
+function getBossAvatar(sceneIdx: number) {
+  const seeds = ['ShadowGolem', 'LogicBeast', 'ArchDragon', 'BugOverlord']
+  const seed = seeds[sceneIdx % seeds.length]
+  return `https://api.dicebear.com/7.x/bottts/svg?seed=${seed}&colors=red,purple,amber`
+}
+
+function getRpgOptionClasses(opt: GameOption, questionId: string) {
+  if (answeredQuestions.value[questionId] === undefined) {
+    return 'spell-btn-idle'
+  }
+  if (opt.isCorrect) {
+    return 'spell-btn-correct'
+  }
+  if (selectedAnswers.value[questionId] === opt.id) {
+    return 'spell-btn-wrong'
+  }
+  return 'spell-btn-disabled'
+}
+
+async function handleRpgSelectOption(element: GameElement, option: GameOption) {
+  if (answeredQuestions.value[element.id]) return
+
+  const isCorrect = option.isCorrect
+  if (isCorrect) {
+    // Hero attacks Boss
+    isHeroAttacking.value = true
+    setTimeout(() => {
+      isHeroAttacking.value = false
+      isBossHit.value = true
+      combatText.value = '💥 CRITICAL HIT! -35 HP'
+      combatEffectType.value = 'hero_crit'
+      bossHp.value = Math.max(0, bossHp.value - 35)
+
+      setTimeout(() => {
+        isBossHit.value = false
+      }, 600)
+      setTimeout(() => {
+        combatText.value = ''
+      }, 1800)
+    }, 350)
+  } else {
+    // Boss counters Hero
+    setTimeout(() => {
+      isHeroHit.value = true
+      combatText.value = '💔 โดนสวนกลับ! -25 DMG'
+      combatEffectType.value = 'boss_crit'
+      heroHp.value = Math.max(10, heroHp.value - 25)
+
+      setTimeout(() => {
+        isHeroHit.value = false
+      }, 600)
+      setTimeout(() => {
+        combatText.value = ''
+      }, 1800)
+    }, 200)
+  }
+
+  // Record answer via common function
+  await selectOption(element, option)
+}
+
+function goToNextRpgStage(nextSceneId?: string) {
+  bossHp.value = 100
+  combatText.value = ''
+  goToNextScene(nextSceneId)
+}
 
 const selectedAnswers = ref<Record<string, string>>({})
 const answeredQuestions = ref<Record<string, any>>({})
@@ -362,6 +625,9 @@ function restartGame() {
   currentScore.value = 0
   durationSpent.value = 0
   correctAnswersCount.value = 0
+  heroHp.value = 100
+  bossHp.value = 100
+  combatText.value = ''
   answeredQuestions.value = {}
   selectedAnswers.value = {}
   isGameComplete.value = false
@@ -455,4 +721,241 @@ onUnmounted(() => {
 .gap-3 { gap: 12px; }
 .max-w-xl { max-width: 620px; }
 .max-w-lg { max-width: 500px; }
+
+/* 2D RPG Battle Arena Styling */
+.max-w-2xl {
+  max-width: 720px;
+}
+.rpg-stage-header {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  backdrop-filter: blur(8px);
+}
+.battle-badge {
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.5px;
+}
+.battlefield-card {
+  background: linear-gradient(180deg, #090d16 0%, #171f33 100%);
+  border: 1.5px solid rgba(139, 92, 246, 0.4);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 25px rgba(124, 58, 237, 0.2);
+}
+.battle-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+.hero-avatar-border {
+  border: 3px solid #38bdf8;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+}
+.boss-avatar-border {
+  border: 3px solid #f43f5e;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.6);
+}
+.unit-lvl-badge {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0284c7;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.boss-lvl-badge {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e11d48;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.hp-gauge-container {
+  min-width: 140px;
+}
+.hp-track {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.hero-hp-fill {
+  background: linear-gradient(90deg, #10b981, #34d399);
+  transition: width 0.4s ease-out;
+}
+.boss-hp-fill {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+  transition: width 0.4s ease-out;
+}
+.mp-track {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.mp-fill {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+.vs-emblem {
+  font-size: 28px;
+  font-weight: 900;
+  font-style: italic;
+  background: linear-gradient(180deg, #facc15, #ea580c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.6));
+}
+.turn-indicator {
+  background: rgba(124, 58, 237, 0.3);
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  color: #e9d5ff;
+  font-size: 11px;
+}
+
+/* Floating Damage Numbers */
+.floating-damage-text {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 26px;
+  font-weight: 900;
+  z-index: 10;
+  pointer-events: none;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+}
+.hero_crit {
+  color: #fef08a;
+  text-shadow: 0 0 20px #f59e0b, 0 0 35px #d97706;
+}
+.boss_crit {
+  color: #fca5a5;
+  text-shadow: 0 0 20px #ef4444, 0 0 35px #b91c1c;
+}
+.damage-pop-enter-active {
+  animation: popFloat 1.2s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+.damage-pop-leave-active {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+@keyframes popFloat {
+  0% { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+  25% { transform: translate(-50%, -25px) scale(1.2); opacity: 1; }
+  70% { transform: translate(-50%, -45px) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -65px) scale(0.9); opacity: 0; }
+}
+
+/* Combat Battle Animations */
+@keyframes heroLunge {
+  0% { transform: translateX(0); }
+  45% { transform: translateX(55px) scale(1.08); }
+  100% { transform: translateX(0); }
+}
+.hero-lunging {
+  animation: heroLunge 0.35s ease-in-out;
+}
+@keyframes unitShake {
+  0%, 100% { transform: translateX(0); filter: drop-shadow(0 0 0 transparent); }
+  20%, 60% { transform: translateX(-8px); filter: drop-shadow(0 0 16px #ef4444); }
+  40%, 80% { transform: translateX(8px); filter: drop-shadow(0 0 16px #ef4444); }
+}
+.unit-hit {
+  animation: unitShake 0.4s ease-in-out;
+}
+
+/* RPG Question Scroll */
+.rpg-question-scroll {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Action Command Deck */
+.spell-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .spell-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.spell-command-btn {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.spell-btn-idle:hover {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: #818cf8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+}
+.spell-btn-correct {
+  background: rgba(16, 185, 129, 0.25) !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+.spell-btn-wrong {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border-color: #ef4444 !important;
+}
+.spell-btn-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.spell-icon-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.spell-slot-0 { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
+.spell-slot-1 { border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); }
+.spell-slot-2 { border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.1); }
+.spell-slot-3 { border-color: rgba(168, 85, 247, 0.4); background: rgba(168, 85, 247, 0.1); }
+
+/* Combat Feedback */
+.combat-feedback-box {
+  backdrop-filter: blur(12px);
+}
+.feedback-victory {
+  background: rgba(6, 78, 59, 0.85);
+  border: 1px solid #10b981;
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.25);
+}
+.feedback-defeat {
+  background: rgba(120, 53, 15, 0.85);
+  border: 1px solid #f59e0b;
+  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.25);
+}
 </style>
