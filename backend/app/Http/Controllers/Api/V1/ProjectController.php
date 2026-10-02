@@ -39,6 +39,9 @@ class ProjectController extends Controller
             'subject' => 'nullable|string|max:255',
             'grade_level' => 'nullable|string|max:255',
             'description' => 'nullable|string',
+            'game_mode' => 'nullable|string|max:32',
+            'game_genre' => 'nullable|string|max:64',
+            'theme_pack' => 'nullable|string|max:64',
         ]);
 
         $project = DesignProject::create([
@@ -47,14 +50,21 @@ class ProjectController extends Controller
             'subject' => $request->subject,
             'grade_level' => $request->grade_level,
             'description' => $request->description,
+            'game_mode' => $request->game_mode ?? 'single',
+            'game_genre' => $request->game_genre ?? 'rpg_quest',
+            'theme_pack' => $request->theme_pack ?? 'fantasy',
             'current_step' => 1,
             'status' => 'in_progress',
         ]);
 
-        // Initialize 5 steps
+        // Initialize 5 steps with synced genre and theme
         DesignEmpathize::create(['project_id' => $project->id, 'grade_level' => $request->grade_level, 'subject' => $request->subject]);
         DesignDefine::create(['project_id' => $project->id]);
-        DesignIdeate::create(['project_id' => $project->id]);
+        DesignIdeate::create([
+            'project_id' => $project->id,
+            'game_genre' => $request->game_genre ?? '2D RPG Quest',
+            'theme' => $request->theme_pack ?? 'fantasy',
+        ]);
         DesignPrototype::create(['project_id' => $project->id]);
         DesignTest::create(['project_id' => $project->id]);
 
@@ -81,8 +91,57 @@ class ProjectController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $project->update($request->only(['title', 'description', 'subject', 'grade_level', 'current_step', 'status']));
+        $project->update($request->only([
+            'title', 'description', 'subject', 'grade_level',
+            'game_mode', 'game_genre', 'theme_pack',
+            'current_step', 'status'
+        ]));
         return response()->json($project);
+    }
+
+    /**
+     * AI Assistant for a specific input field in Design Thinking Studio
+     */
+    public function aiFieldAssist(Request $request, int $id): JsonResponse
+    {
+        $project = DesignProject::findOrFail($id);
+        if (!$request->user()->isAdmin() && $project->teacher_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'step' => 'required|string',
+            'field' => 'required|string',
+            'current_value' => 'nullable|string',
+        ]);
+
+        $step = $request->input('step');
+        $field = $request->input('field');
+        $currentValue = $request->input('current_value', '');
+
+        $result = $this->aiService->generateFieldSuggestion($project, $step, $field, $currentValue);
+
+        return response()->json($result);
+    }
+
+    /**
+     * Auto-fill entire step fields using AI
+     */
+    public function aiStepAutoFill(Request $request, int $id): JsonResponse
+    {
+        $project = DesignProject::findOrFail($id);
+        if (!$request->user()->isAdmin() && $project->teacher_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'step' => 'required|string',
+        ]);
+
+        $step = $request->input('step');
+        $result = $this->aiService->generateStepAutoFill($project, $step);
+
+        return response()->json($result);
     }
 
     /**

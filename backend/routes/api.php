@@ -28,6 +28,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('projects', ProjectController::class);
         Route::put('/projects/{id}/step/{step}', [ProjectController::class, 'updateStep']);
         Route::post('/projects/{id}/ai-assist', [ProjectController::class, 'aiAssist']);
+        Route::post('/projects/{id}/ai-field-assist', [ProjectController::class, 'aiFieldAssist']);
+        Route::post('/projects/{id}/ai-step-autofill', [ProjectController::class, 'aiStepAutoFill']);
         Route::post('/projects/{id}/generate-game', [ProjectController::class, 'generateGame']);
 
         // Games & Editor

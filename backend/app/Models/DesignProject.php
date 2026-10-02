@@ -15,6 +15,9 @@ class DesignProject extends Model
         'description',
         'subject',
         'grade_level',
+        'game_mode',
+        'game_genre',
+        'theme_pack',
         'current_step',
         'status',
     ];

@@ -33,6 +33,9 @@ export interface DesignProject {
   description?: string
   subject?: string
   grade_level?: string
+  game_mode?: 'single' | 'multiplayer_live'
+  game_genre?: string
+  theme_pack?: string
   current_step: number
   status: 'draft' | 'in_progress' | 'ready' | 'generated' | 'published' | 'archived'
   empathize?: DesignEmpathize

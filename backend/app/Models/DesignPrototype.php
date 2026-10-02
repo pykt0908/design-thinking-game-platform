@@ -29,4 +29,23 @@ class DesignPrototype extends Model
     {
         return $this->belongsTo(DesignProject::class, 'project_id');
     }
+
+    public function setCoreRulesAttribute($value)
+    {
+        if (is_string($value)) {
+            $this->attributes['core_rules'] = json_encode([$value]);
+        } else {
+            $this->attributes['core_rules'] = json_encode($value);
+        }
+    }
+
+    public function getCoreRulesAttribute($value)
+    {
+        if (empty($value)) return '';
+        $decoded = json_decode($value, true);
+        if (is_array($decoded)) {
+            return implode("\n", $decoded);
+        }
+        return (string)$value;
+    }
 }
