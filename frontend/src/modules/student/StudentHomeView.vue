@@ -115,10 +115,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useAlertStore } from '@/stores/alert'
 import apiClient from '@/api/client'
 import type { GameAssignment } from '@/types'
 
 const authStore = useAuthStore()
+const alertStore = useAlertStore()
 const joinCodeInput = ref('')
 const joining = ref(false)
 const assignedGames = ref<GameAssignment[]>([])
@@ -147,11 +149,11 @@ async function handleJoinClassroom() {
     const { data } = await apiClient.post('/classrooms/join', {
       code: joinCodeInput.value,
     })
-    alert(data.message)
+    alertStore.success(data.message || 'เข้าร่วมห้องเรียนเรียบร้อยแล้ว!', 'สำเร็จ')
     joinCodeInput.value = ''
     await loadStudentData()
   } catch (err: any) {
-    alert(err.response?.data?.message || 'ไม่สามารถเข้าร่วมห้องเรียนได้')
+    alertStore.error(err.response?.data?.message || 'ไม่สามารถเข้าร่วมห้องเรียนได้', 'เกิดข้อผิดพลาด')
   } finally {
     joining.value = false
   }

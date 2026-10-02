@@ -425,10 +425,12 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useGameBuilderStore } from '@/stores/gameBuilder'
+import { useAlertStore } from '@/stores/alert'
 import type { GameElement } from '@/types'
 
 const route = useRoute()
 const gameBuilderStore = useGameBuilderStore()
+const alertStore = useAlertStore()
 const showPreviewModal = ref(false)
 
 function formatElementType(type: string) {
@@ -519,7 +521,7 @@ function openPreview() {
 
 async function publishGame() {
   await gameBuilderStore.saveGame(true)
-  alert('เผยแพร่เกมเรียบร้อยแล้ว! นักเรียนสามารถเข้าเล่นผ่านรหัส ' + gameBuilderStore.game?.public_id)
+  alertStore.success('เผยแพร่เกมเรียบร้อยแล้ว! นักเรียนสามารถเข้าเล่นผ่านรหัส ' + (gameBuilderStore.game?.public_id || ''), 'เผยแพร่เกมสำเร็จ')
 }
 
 onMounted(async () => {

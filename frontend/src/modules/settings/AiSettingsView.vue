@@ -215,7 +215,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import apiClient from '@/api/client'
+import { useAlertStore } from '@/stores/alert'
 
+const alertStore = useAlertStore()
 const provider = ref('gemini')
 const model = ref('gemini-1.5-flash')
 const baseUrl = ref('')
@@ -284,9 +286,9 @@ async function testConnection() {
       provider: provider.value,
       model: model.value,
     })
-    alert(`${data.message} (ความเร็ว: ${data.latency_ms}ms)`)
+    alertStore.success(`${data.message} (ความเร็ว: ${data.latency_ms}ms)`, 'เชื่อมต่อ AI สำเร็จ')
   } catch (err: any) {
-    alert('เชื่อมต่อไม่สำเร็จ กรุณาตรวจสอบ API Key')
+    alertStore.error('เชื่อมต่อไม่สำเร็จ กรุณาตรวจสอบ API Key', 'การเชื่อมต่อล้มเหลว')
   } finally {
     testing.value = false
   }
@@ -294,7 +296,7 @@ async function testConnection() {
 
 async function handleSave() {
   if (!apiKey.value && !existingMaskedKey.value) {
-    alert('กรุณากรอก API Key')
+    alertStore.warning('กรุณากรอก API Key')
     return
   }
 
@@ -306,11 +308,12 @@ async function handleSave() {
       base_url: baseUrl.value || null,
       api_key: apiKey.value || 'existing',
     })
-    alert('บันทึกข้อมูล AI Provider สำเร็จ!')
+    alertStore.success('บันทึกข้อมูล AI Provider เรียบร้อยแล้ว!')
     apiKey.value = ''
     await loadCredentials()
   } catch (err) {
     console.error('Failed to save AI credentials', err)
+    alertStore.error('เกิดข้อผิดพลาดในการบันทึกข้อมูล AI Provider')
   } finally {
     saving.value = false
   }

@@ -599,12 +599,14 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProjectStore } from '@/stores/project'
+import { useAlertStore } from '@/stores/alert'
 import apiClient from '@/api/client'
 import type { DesignProject } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
 const projectStore = useProjectStore()
+const alertStore = useAlertStore()
 
 const project = ref<DesignProject | null>(null)
 const currentStepIndex = ref(0)
@@ -693,10 +695,10 @@ async function startGeneration() {
       showGenerateModal.value = false
       router.push(`/games/${data.game.id}/edit`)
     }, 600)
-  } catch (err) {
+  } catch (err: any) {
     clearInterval(interval)
     isGenerating.value = false
-    alert('เกิดข้อผิดพลาดในการสร้างเกม')
+    alertStore.error(err.response?.data?.message || 'เกิดข้อผิดพลาดในการสร้างเกม', 'สร้างเกมไม่สำเร็จ')
   }
 }
 

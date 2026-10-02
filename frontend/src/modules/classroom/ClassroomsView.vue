@@ -304,7 +304,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import apiClient from '@/api/client'
+import { useAlertStore } from '@/stores/alert'
 import type { Classroom, Game } from '@/types'
+
+const alertStore = useAlertStore()
 
 const classrooms = ref<Classroom[]>([])
 const availableGames = ref<Game[]>([])
@@ -416,7 +419,7 @@ async function handleAssignGame() {
       passing_score: assignPassingScore.value,
     })
     showAssignDialog.value = false
-    alert('มอบหมายเกมให้ห้องเรียนสำเร็จ!')
+    alertStore.success('มอบหมายเกมให้ห้องเรียนสำเร็จ!')
     await loadData()
   } finally {
     assigning.value = false
@@ -425,7 +428,7 @@ async function handleAssignGame() {
 
 function copyJoinCode(code: string) {
   navigator.clipboard.writeText(code)
-  alert(`คัดลอกรหัสห้องเรียน "${code}" เรียบร้อยแล้ว! นำไปส่งให้นักเรียนเพื่อเข้าร่วมได้เลย`)
+  alertStore.toast(`คัดลอกรหัสห้องเรียน "${code}" เรียบร้อยแล้ว!`, 'info')
 }
 
 onMounted(loadData)

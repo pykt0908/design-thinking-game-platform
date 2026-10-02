@@ -1,7 +1,10 @@
 <template>
-  <router-view />
+  <v-app>
+    <router-view />
+    <AppAlert />
+  </v-app>
 </template>
 
 <script setup lang="ts">
-// App Root
+import AppAlert from '@/components/common/AppAlert.vue'
 </script>

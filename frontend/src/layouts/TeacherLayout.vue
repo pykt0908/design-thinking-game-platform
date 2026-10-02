@@ -20,9 +20,9 @@
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
-              variant="text"
-              rounded="pill"
-              class="px-3 py-1 border d-flex align-center bg-purple-lighten-5"
+              variant="outlined"
+              rounded="lg"
+              class="px-3 py-1 d-flex align-center bg-surface hover:bg-surface-variant border border-slate-200"
             >
               <v-avatar size="28" color="primary" class="mr-2 text-white">
                 <span class="text-caption font-weight-bold">

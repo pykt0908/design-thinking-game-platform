@@ -222,12 +222,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAlertStore } from '@/stores/alert'
 import apiClient from '@/api/client'
 import confetti from 'canvas-confetti'
 import type { GameSchema, GameScene, GameElement, GameOption } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
+const alertStore = useAlertStore()
 
 const loading = ref(true)
 const error = ref('')
@@ -379,8 +381,13 @@ function startTimer() {
   }, 1000)
 }
 
-function confirmExit() {
-  if (confirm('คุณต้องการออกจากเกมใช่หรือไม่? ผลการเล่นจะถูกบันทึก')) {
+async function confirmExit() {
+  const confirmed = await alertStore.confirm(
+    'คุณต้องการออกจากเกมใช่หรือไม่? ผลการเล่นจะถูกบันทึก',
+    'ออกจากเกม',
+    { confirmText: 'ออกจากเกม', cancelText: 'เล่นต่อ', type: 'warning' }
+  )
+  if (confirmed) {
     router.push('/dashboard')
   }
 }
