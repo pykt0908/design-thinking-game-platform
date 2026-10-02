@@ -53,6 +53,100 @@
           </template>
         </v-combobox>
 
+        <!-- Provider Direct Link & Guide Cards -->
+        <v-card v-if="provider === 'gemini'" class="pa-4 mb-4 rounded-xl border bg-purple-lighten-5">
+          <div class="d-flex flex-column flex-sm-row justify-space-between align-sm-center gap-3">
+            <div class="d-flex align-center">
+              <v-avatar size="40" color="white" class="mr-3 elevation-1 flex-shrink-0">
+                <v-icon icon="mdi-google" color="primary" size="22"></v-icon>
+              </v-avatar>
+              <div>
+                <div class="font-weight-bold text-subtitle-2 text-slate-800">
+                  ต้องการสร้าง Project และขอ Google Gemini API Key?
+                </div>
+                <div class="text-caption text-slate-600">
+                  สร้าง Project และขอรับ API Key ฟรีผ่าน Google AI Studio (ใช้งานฟรี ไม่จำเป็นต้องผูกบัตรเครดิต)
+                </div>
+              </div>
+            </div>
+
+            <v-btn
+              href="https://aistudio.google.com/app/apikey"
+              target="_blank"
+              rel="noopener noreferrer"
+              color="primary"
+              rounded="lg"
+              size="small"
+              class="font-weight-bold px-4 flex-shrink-0 align-self-start align-self-sm-center elevation-1"
+              prepend-icon="mdi-open-in-new"
+            >
+              เปิด Google AI Studio
+            </v-btn>
+          </div>
+        </v-card>
+
+        <v-card v-else-if="provider === 'openai'" class="pa-4 mb-4 rounded-xl border bg-purple-lighten-5">
+          <div class="d-flex flex-column flex-sm-row justify-space-between align-sm-center gap-3">
+            <div class="d-flex align-center">
+              <v-avatar size="40" color="white" class="mr-3 elevation-1 flex-shrink-0">
+                <v-icon icon="mdi-robot" color="secondary" size="22"></v-icon>
+              </v-avatar>
+              <div>
+                <div class="font-weight-bold text-subtitle-2 text-slate-800">
+                  ต้องการขอรับ OpenAI API Key?
+                </div>
+                <div class="text-caption text-slate-600">
+                  เปิด OpenAI Developer Platform เพื่อสร้าง Secret Key
+                </div>
+              </div>
+            </div>
+
+            <v-btn
+              href="https://platform.openai.com/api-keys"
+              target="_blank"
+              rel="noopener noreferrer"
+              color="secondary"
+              rounded="lg"
+              size="small"
+              class="font-weight-bold px-4 flex-shrink-0 align-self-start align-self-sm-center elevation-1"
+              prepend-icon="mdi-open-in-new"
+            >
+              เปิด OpenAI API Keys
+            </v-btn>
+          </div>
+        </v-card>
+
+        <v-card v-else-if="provider === 'anthropic'" class="pa-4 mb-4 rounded-xl border bg-purple-lighten-5">
+          <div class="d-flex flex-column flex-sm-row justify-space-between align-sm-center gap-3">
+            <div class="d-flex align-center">
+              <v-avatar size="40" color="white" class="mr-3 elevation-1 flex-shrink-0">
+                <v-icon icon="mdi-brain" color="primary" size="22"></v-icon>
+              </v-avatar>
+              <div>
+                <div class="font-weight-bold text-subtitle-2 text-slate-800">
+                  ต้องการขอรับ Anthropic API Key?
+                </div>
+                <div class="text-caption text-slate-600">
+                  เปิด Anthropic Console เพื่อจัดการ API Key
+                </div>
+              </div>
+            </div>
+
+            <v-btn
+              href="https://console.anthropic.com/settings/keys"
+              target="_blank"
+              rel="noopener noreferrer"
+              color="primary"
+              rounded="lg"
+              size="small"
+              class="font-weight-bold px-4 flex-shrink-0 align-self-start align-self-sm-center elevation-1"
+              prepend-icon="mdi-open-in-new"
+            >
+              เปิด Anthropic Console
+            </v-btn>
+          </div>
+        </v-card>
+
         <!-- API Key Input -->
         <v-text-field
           v-model="apiKey"
@@ -60,8 +154,32 @@
           type="password"
           :placeholder="existingMaskedKey || 'กรอก API Key ใหม่ของคุณที่นี่'"
           prepend-inner-icon="mdi-key-outline"
-          class="mb-3 mt-2"
-        ></v-text-field>
+          class="mb-1 mt-2"
+        >
+          <template #append-inner>
+            <v-tooltip text="เปิด Google AI Studio เพื่อสร้าง Project และรับ API Key" location="top">
+              <template #activator="{ props }">
+                <v-btn
+                  v-if="provider === 'gemini'"
+                  v-bind="props"
+                  icon="mdi-open-in-new"
+                  variant="text"
+                  size="small"
+                  color="primary"
+                  href="https://aistudio.google.com/app/apikey"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="เปิด Google AI Studio"
+                ></v-btn>
+              </template>
+            </v-tooltip>
+          </template>
+        </v-text-field>
+
+        <div v-if="provider === 'gemini'" class="text-caption text-primary mb-3 d-flex align-center">
+          <v-icon icon="mdi-information-outline" size="14" class="mr-1"></v-icon>
+          <span>ยังไม่มี Key? คลิก <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="font-weight-bold text-decoration-underline text-primary">สร้าง Project และรับ Key ฟรีที่ Google AI Studio</a></span>
+        </div>
 
         <div v-if="existingMaskedKey" class="text-caption text-grey mb-4">
           คีย์ปัจจุบันที่ใช้งานอยู่: <code>{{ existingMaskedKey }}</code>

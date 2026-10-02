@@ -14,19 +14,12 @@
       <v-spacer></v-spacer>
 
       <div class="d-flex align-center gap-2">
-        <v-btn
-          to="/projects/new"
-          class="ai-gradient-bg text-white mr-3 px-4"
-          prepend-icon="mdi-plus"
-          rounded="lg"
-        >
-          สร้างโปรเจกต์ใหม่
-        </v-btn>
+        
 
         <v-menu location="bottom end">
           <template #activator="{ props }">
             <v-btn v-bind="props" icon variant="text">
-              <v-avatar size="36" color="primary-lighten-4">
+              <v-avatar size="36" color="primary-lighten">
                 <span class="text-subtitle-2 font-weight-bold text-primary">
                   {{ authStore.user?.name?.charAt(0) || 'U' }}
                 </span>
