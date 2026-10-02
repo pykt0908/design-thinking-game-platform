@@ -98,6 +98,9 @@ function handleLogout() {
   background: linear-gradient(90deg, #24003d 0%, #3d0066 45%, #500085 100%) !important;
   border-bottom: 1px solid rgba(198, 112, 255, 0.25) !important;
   box-shadow: 0 4px 20px rgba(36, 0, 61, 0.25) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
 }
 
 .brand-logo-glow {

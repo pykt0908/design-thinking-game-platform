@@ -171,7 +171,7 @@
     </v-navigation-drawer>
 
     <!-- Main Content -->
-    <v-main style="background-color: #faf7fd; min-height: 100vh;">
+    <v-main style="background-color: #faf7fd; min-height: 100vh; padding-top: 64px !important;">
       <v-container fluid class="pa-6 max-w-7xl mx-auto">
         <router-view></router-view>
       </v-container>
@@ -199,11 +199,16 @@ function handleLogout() {
   gap: 8px;
 }
 
-/* Top Navbar Prominent Styling */
+/* Top Navbar Prominent Styling - Sticky Fixed */
 .top-navbar-prominent {
   background: linear-gradient(90deg, #24003d 0%, #3d0066 45%, #500085 100%) !important;
   border-bottom: 1px solid rgba(198, 112, 255, 0.25) !important;
   box-shadow: 0 4px 20px rgba(36, 0, 61, 0.25) !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1000 !important;
 }
 
 .brand-logo-glow {
