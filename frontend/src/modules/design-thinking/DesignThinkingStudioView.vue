@@ -49,6 +49,15 @@
         </v-btn>
 
         <v-btn
+          icon="mdi-trash-can-outline"
+          variant="text"
+          color="grey-darken-1"
+          size="small"
+          @click="handleDeleteProject"
+          title="ลบโปรเจกต์นี้"
+        ></v-btn>
+
+        <v-btn
           v-if="currentStepIndex === 4"
           color="success"
           rounded="lg"
@@ -699,6 +708,25 @@ async function startGeneration() {
     clearInterval(interval)
     isGenerating.value = false
     alertStore.error(err.response?.data?.message || 'เกิดข้อผิดพลาดในการสร้างเกม', 'สร้างเกมไม่สำเร็จ')
+  }
+}
+
+async function handleDeleteProject() {
+  if (!project.value) return
+  const confirmed = await alertStore.confirm(
+    `คุณต้องการลบโปรเจกต์ "${project.value.title}" ใช่หรือไม่? ข้อมูลขั้นตอน Design Thinking ทั้งหมดจะถูกลบอย่างถาวร`,
+    'ยืนยันการลบโปรเจกต์',
+    { confirmText: 'ลบโปรเจกต์', cancelText: 'ยกเลิก', type: 'error' }
+  )
+
+  if (!confirmed) return
+
+  try {
+    await apiClient.delete(`/projects/${project.value.id}`)
+    alertStore.success('ลบโปรเจกต์เรียบร้อยแล้ว', 'สำเร็จ')
+    router.push('/projects')
+  } catch (err: any) {
+    alertStore.error(err.response?.data?.message || 'ไม่สามารถลบโปรเจกต์ได้', 'เกิดข้อผิดพลาด')
   }
 }
 
