@@ -38,7 +38,16 @@ class ClassroomController extends Controller
             'description' => 'nullable|string',
             'academic_year' => 'nullable|string|max:16',
             'semester' => 'nullable|string|max:16',
+            'cover_image' => 'nullable|string',
+            'cover_file' => 'nullable|image|max:5120',
+            'theme_color' => 'nullable|string|max:32',
         ]);
+
+        $coverImage = $request->cover_image;
+        if ($request->hasFile('cover_file')) {
+            $path = $request->file('cover_file')->store('classroom-covers', 'public');
+            $coverImage = '/storage/' . $path;
+        }
 
         $classroom = Classroom::create([
             'teacher_id' => $request->user()->id,
@@ -47,10 +56,54 @@ class ClassroomController extends Controller
             'description' => $request->description,
             'academic_year' => $request->academic_year ?? '2569',
             'semester' => $request->semester ?? '1',
+            'cover_image' => $coverImage,
+            'theme_color' => $request->theme_color ?? '#3d0066',
             'status' => 'active',
         ]);
 
         return response()->json($classroom, 201);
+    }
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $classroom = Classroom::findOrFail($id);
+
+        if (!$request->user()->isAdmin() && $classroom->teacher_id !== $request->user()->id) {
+            return response()->json(['message' => 'ไม่มีสิทธิ์แก้ไขห้องเรียนนี้'], 403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'academic_year' => 'nullable|string|max:16',
+            'semester' => 'nullable|string|max:16',
+            'cover_image' => 'nullable|string',
+            'cover_file' => 'nullable|image|max:5120',
+            'theme_color' => 'nullable|string|max:32',
+            'status' => 'nullable|in:active,archived',
+        ]);
+
+        if ($request->hasFile('cover_file')) {
+            $path = $request->file('cover_file')->store('classroom-covers', 'public');
+            $validated['cover_image'] = '/storage/' . $path;
+        }
+
+        $classroom->update($validated);
+
+        return response()->json($classroom->load(['students', 'assignments.game']));
+    }
+
+    public function destroy(Request $request, int $id): JsonResponse
+    {
+        $classroom = Classroom::findOrFail($id);
+
+        if (!$request->user()->isAdmin() && $classroom->teacher_id !== $request->user()->id) {
+            return response()->json(['message' => 'ไม่มีสิทธิ์ลบห้องเรียนนี้'], 403);
+        }
+
+        $classroom->delete();
+
+        return response()->json(['message' => 'ลบห้องเรียนเรียบร้อยแล้ว']);
     }
 
     public function show(Request $request, int $id): JsonResponse

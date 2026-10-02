@@ -17,6 +17,8 @@ class Classroom extends Model
         'description',
         'academic_year',
         'semester',
+        'cover_image',
+        'theme_color',
         'status',
     ];
 

@@ -18,6 +18,8 @@ export interface Classroom {
   description?: string
   academic_year?: string
   semester?: string
+  cover_image?: string
+  theme_color?: string
   status: 'active' | 'archived'
   students?: User[]
   assignments?: GameAssignment[]
