@@ -26,7 +26,7 @@
           </template>
           <template v-else-if="projectStore.saveStatus === 'saved'">
             <v-icon icon="mdi-check-circle" color="success" size="16" class="mr-1"></v-icon>
-            <span class="text-success">บันทึกเรียบร้อย ✓</span>
+            <span class="text-success">บันทึกเรียบร้อย</span>
           </template>
           <template v-else-if="projectStore.saveStatus === 'error'">
             <v-icon icon="mdi-alert-circle" color="error" size="16" class="mr-1"></v-icon>
@@ -45,7 +45,7 @@
           @click="openAiAssistant"
           size="small"
         >
-          ✨ AI ผู้ช่วย
+          AI ผู้ช่วย
         </v-btn>
 
         <v-btn
@@ -367,11 +367,11 @@
                 <v-select
                   v-model.number="testData.difficulty_rating"
                   :items="[
-                    { title: '⭐ ง่ายมาก (1/5)', value: 1 },
-                    { title: '⭐⭐ ง่าย (2/5)', value: 2 },
-                    { title: '⭐⭐⭐ พอดี เหมาะสม (3/5)', value: 3 },
-                    { title: '⭐⭐⭐⭐ ค่อนข้างยาก (4/5)', value: 4 },
-                    { title: '⭐⭐⭐⭐⭐ ท้าทายมาก (5/5)', value: 5 },
+                    { title: 'ระดับ 1 - ง่ายมาก (1/5)', value: 1 },
+                    { title: 'ระดับ 2 - ง่าย (2/5)', value: 2 },
+                    { title: 'ระดับ 3 - พอดี เหมาะสม (3/5)', value: 3 },
+                    { title: 'ระดับ 4 - ค่อนข้างยาก (4/5)', value: 4 },
+                    { title: 'ระดับ 5 - ท้าทายมาก (5/5)', value: 5 },
                   ]"
                   label="ระดับความยากที่ประเมิน"
                   @update:model-value="onFieldChange('test', testData)"
@@ -429,7 +429,7 @@
               rounded="lg"
               @click="showGenerateModal = true"
             >
-              ✨ สร้างเกมด้วย AI
+              สร้างเกมด้วย AI
             </v-btn>
           </div>
         </v-card>
@@ -449,7 +449,7 @@
           <v-avatar size="32" class="ai-gradient-bg mr-2">
             <v-icon icon="mdi-creation" color="white" size="18"></v-icon>
           </v-avatar>
-          <span class="font-weight-bold text-subtitle-1">✨ AI Suggestion</span>
+          <span class="font-weight-bold text-subtitle-1">AI Suggestion</span>
         </div>
         <v-btn icon="mdi-close" variant="text" size="small" @click="aiDrawer = false"></v-btn>
       </div>
@@ -499,7 +499,7 @@
             <v-icon icon="mdi-creation" color="white" size="36"></v-icon>
           </v-avatar>
           <h2 class="text-h5 font-weight-bold text-slate-800">
-            {{ isGenerating ? '✨ กำลังสร้างเกมของคุณ' : 'พร้อมสร้างเกมการเรียนรู้' }}
+            {{ isGenerating ? 'กำลังสร้างเกมของคุณ' : 'พร้อมสร้างเกมการเรียนรู้' }}
           </h2>
           <p class="text-caption text-grey mt-1">
             แปลงแนวคิดจากกระบวนการ Design Thinking สู่ Web Game อัตโนมัติ
@@ -509,10 +509,22 @@
         <div v-if="!isGenerating" class="mb-6">
           <v-sheet color="grey-lighten-4" rounded="lg" class="pa-4">
             <div class="font-weight-bold text-subtitle-2 mb-2 text-slate-800">สรุปข้อมูลโปรเจกต์</div>
-            <div class="text-caption text-grey-darken-2 mb-1">🎯 วิชา: {{ project.subject }}</div>
-            <div class="text-caption text-grey-darken-2 mb-1">👨‍🎓 ผู้เรียน: {{ empathizeData.target_learner || 'ม.1' }}</div>
-            <div class="text-caption text-grey-darken-2 mb-1">💡 ปัญหา: {{ defineData.problem_statement || '-' }}</div>
-            <div class="text-caption text-grey-darken-2">🎮 คอนเซปต์: {{ ideateData.game_concept || '-' }}</div>
+            <div class="text-caption text-grey-darken-2 mb-1 d-flex align-center">
+              <v-icon icon="mdi-target" size="15" class="mr-1 text-primary"></v-icon>
+              <span>วิชา: {{ project.subject }}</span>
+            </div>
+            <div class="text-caption text-grey-darken-2 mb-1 d-flex align-center">
+              <v-icon icon="mdi-account-school" size="15" class="mr-1 text-primary"></v-icon>
+              <span>ผู้เรียน: {{ empathizeData.target_learner || 'ม.1' }}</span>
+            </div>
+            <div class="text-caption text-grey-darken-2 mb-1 d-flex align-center">
+              <v-icon icon="mdi-lightbulb" size="15" class="mr-1 text-warning"></v-icon>
+              <span>ปัญหา: {{ defineData.problem_statement || '-' }}</span>
+            </div>
+            <div class="text-caption text-grey-darken-2 d-flex align-center">
+              <v-icon icon="mdi-gamepad-variant" size="15" class="mr-1 text-success"></v-icon>
+              <span>คอนเซปต์: {{ ideateData.game_concept || '-' }}</span>
+            </div>
           </v-sheet>
         </div>
 

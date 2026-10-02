@@ -48,7 +48,9 @@
       <main class="player-canvas flex-grow-1 d-flex flex-column justify-center align-center pa-4">
         <!-- Result / Completion Screen per spec Section 32 -->
         <div v-if="isGameComplete" class="victory-card text-center pa-8 rounded-2xl bg-white elevation-4 max-w-lg w-100 animate-fade-in">
-          <div class="text-h3 mb-2">🎉</div>
+          <v-avatar size="64" color="amber-lighten-4" class="mb-3">
+            <v-icon icon="mdi-party-popper" color="warning" size="36"></v-icon>
+          </v-avatar>
           <h2 class="text-h4 font-weight-bold text-slate-800 mb-1">ภารกิจสำเร็จ!</h2>
           <p class="text-body-2 text-grey mb-6">คุณได้ทำแบบทดสอบและเรียนรู้ผ่านเกมเรียบร้อยแล้ว</p>
 
@@ -58,10 +60,14 @@
             </div>
             <div class="text-subtitle-2 text-grey">คะแนนเต็ม 100</div>
 
-            <div class="stars mt-3 text-h5">
-              <span v-for="s in 3" :key="s">
-                {{ s <= calculateStars() ? '⭐' : '☆' }}
-              </span>
+            <div class="stars mt-3 d-flex justify-center gap-1">
+              <v-icon
+                v-for="s in 3"
+                :key="s"
+                :icon="s <= calculateStars() ? 'mdi-star' : 'mdi-star-outline'"
+                color="amber"
+                size="32"
+              ></v-icon>
             </div>
           </div>
 
@@ -76,8 +82,13 @@
             </div>
             <div>
               <div class="text-caption text-grey">ผลการประเมิน</div>
-              <div class="font-weight-bold text-success">
-                {{ currentScore >= (schema.scoring.passingScore || 60) ? 'ผ่านเกณฑ์ ✓' : 'ต้องปรับปรุง' }}
+              <div class="font-weight-bold text-success d-flex align-center justify-center">
+                <template v-if="currentScore >= (schema.scoring.passingScore || 60)">
+                  <v-icon icon="mdi-check-circle" size="16" class="mr-1"></v-icon> ผ่านเกณฑ์
+                </template>
+                <template v-else>
+                  <v-icon icon="mdi-alert-circle" size="16" class="mr-1"></v-icon> ต้องปรับปรุง
+                </template>
               </div>
             </div>
           </div>
@@ -169,7 +180,7 @@
               <div v-if="answeredQuestions[el.id]" class="feedback-card pa-4 rounded-xl mt-3 animate-fade-in" :class="answeredQuestions[el.id].is_correct ? 'bg-green-lighten-5 text-success' : 'bg-amber-lighten-5 text-warning'">
                 <div class="d-flex align-center font-weight-bold mb-1">
                   <v-icon :icon="answeredQuestions[el.id].is_correct ? 'mdi-check-circle' : 'mdi-alert-circle'" class="mr-2"></v-icon>
-                  <span>{{ answeredQuestions[el.id].is_correct ? '✓ ถูกต้องยอดเยี่ยม! (+ ' + (el.points || 10) + ' แต้ม)' : 'คำใบ้เพื่อการเรียนรู้:' }}</span>
+                  <span>{{ answeredQuestions[el.id].is_correct ? 'ถูกต้องยอดเยี่ยม! (+ ' + (el.points || 10) + ' แต้ม)' : 'คำใบ้เพื่อการเรียนรู้:' }}</span>
                 </div>
                 <div class="text-caption text-slate-700">
                   {{ answeredQuestions[el.id].explanation || el.explanation || 'ขอให้เรียนรู้จากคำตอบและก้าวต่อไป!' }}
@@ -195,9 +206,10 @@
                 class="ai-gradient-bg text-white font-weight-bold px-8 py-3"
                 size="x-large"
                 rounded="xl"
+                prepend-icon="mdi-trophy"
                 @click="finishGame"
               >
-                ดูสรุปผลคะแนนภารกิจ 🏆
+                ดูสรุปผลคะแนนภารกิจ
               </v-btn>
             </div>
           </template>

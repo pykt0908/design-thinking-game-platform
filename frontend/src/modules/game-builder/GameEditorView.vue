@@ -58,8 +58,8 @@
 
       <!-- Right Actions: Save, Play Test, Publish -->
       <div class="d-flex align-center gap-2">
-        <div v-if="gameBuilderStore.saveSuccess" class="text-caption text-success font-weight-bold mr-2">
-          บันทึกแล้ว ✓
+        <div v-if="gameBuilderStore.saveSuccess" class="text-caption text-success font-weight-bold mr-2 d-flex align-center">
+          <v-icon icon="mdi-check-circle" size="14" class="mr-1"></v-icon> บันทึกเรียบร้อย
         </div>
 
         <v-btn
@@ -209,7 +209,7 @@
                 <v-icon start icon="mdi-timer-outline"></v-icon> 05:00
               </v-chip>
               <v-chip size="x-small" color="amber" variant="flat">
-                ⭐ 100 แต้ม
+                <v-icon start icon="mdi-star" size="14"></v-icon> 100 แต้ม
               </v-chip>
             </div>
           </div>
@@ -267,7 +267,7 @@
                 <v-avatar size="56" color="amber-lighten-4" class="mb-2">
                   <v-icon icon="mdi-trophy" color="warning" size="32"></v-icon>
                 </v-avatar>
-                <div class="text-h6 font-weight-bold text-slate-800">{{ el.title || '🎉 ภารกิจสำเร็จ!' }}</div>
+                <div class="text-h6 font-weight-bold text-slate-800">{{ el.title || 'ภารกิจสำเร็จ!' }}</div>
                 <div class="text-body-2 text-grey mb-3">{{ el.message }}</div>
                 <v-chip color="success" class="font-weight-bold">ผ่านเกณฑ์ยอดเยี่ยม</v-chip>
               </div>
@@ -507,7 +507,7 @@ function addCompletionElement() {
   const el: GameElement = {
     id: 'comp_' + Date.now().toString(36),
     type: 'completion',
-    title: '🎉 ภารกิจสำเร็จยอดเยี่ยม!',
+    title: 'ภารกิจสำเร็จยอดเยี่ยม!',
     message: 'คุณได้ผ่านการทดสอบครบทุกด่านแล้ว ขอแสดงความยินดีด้วย!',
   }
   gameBuilderStore.addElementToActiveScene(el)

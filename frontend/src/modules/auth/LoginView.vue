@@ -13,8 +13,9 @@
 
       <!-- Quick Demo Login Switcher -->
       <v-sheet rounded="lg" color="grey-lighten-4" class="pa-3 mb-6">
-        <div class="text-caption font-weight-bold text-grey-darken-2 mb-2 text-center">
-          ⚡ เลือกล็อกอินเพื่อทดสอบระบบ (Quick Demo)
+        <div class="text-caption font-weight-bold text-grey-darken-2 mb-2 text-center d-flex align-center justify-center">
+          <v-icon icon="mdi-flash" color="warning" size="16" class="mr-1"></v-icon>
+          เลือกล็อกอินเพื่อทดสอบระบบ (Quick Demo)
         </div>
         <div class="d-flex gap-2 justify-center">
           <v-btn
@@ -22,30 +23,33 @@
             color="primary"
             variant="flat"
             rounded="lg"
+            prepend-icon="mdi-account-tie"
             @click="quickLogin('teacher@example.com', 'password')"
             :loading="loading"
           >
-            👨‍🏫 คุณครู (Teacher)
+            คุณครู (Teacher)
           </v-btn>
           <v-btn
             size="small"
             color="secondary"
             variant="flat"
             rounded="lg"
+            prepend-icon="mdi-account-school"
             @click="quickLogin('student@example.com', 'password')"
             :loading="loading"
           >
-            👦 นักเรียน (Student)
+            นักเรียน (Student)
           </v-btn>
           <v-btn
             size="small"
             color="grey-darken-3"
             variant="flat"
             rounded="lg"
+            prepend-icon="mdi-shield-crown"
             @click="quickLogin('admin@example.com', 'password')"
             :loading="loading"
           >
-            ⚙️ Admin
+            Admin
           </v-btn>
         </div>
       </v-sheet>

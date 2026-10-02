@@ -26,7 +26,10 @@
       <v-row class="mb-6">
         <v-col cols="12" sm="6" lg="3">
           <v-card class="pa-4 border-card rounded-xl">
-            <div class="text-caption text-grey font-weight-bold mb-1">⭐ คะแนนเฉลี่ย</div>
+            <div class="text-caption text-grey font-weight-bold mb-1 d-flex align-center">
+              <v-icon icon="mdi-star" color="amber-darken-2" size="16" class="mr-1"></v-icon>
+              <span>คะแนนเฉลี่ย</span>
+            </div>
             <div class="text-h4 font-weight-bold text-slate-800">
               {{ analytics.average_score }} <span class="text-caption text-grey">/ 100</span>
             </div>
@@ -35,7 +38,10 @@
 
         <v-col cols="12" sm="6" lg="3">
           <v-card class="pa-4 border-card rounded-xl">
-            <div class="text-caption text-grey font-weight-bold mb-1">🏁 อัตราเล่นจบ (Completion)</div>
+            <div class="text-caption text-grey font-weight-bold mb-1 d-flex align-center">
+              <v-icon icon="mdi-flag-checkered" color="primary" size="16" class="mr-1"></v-icon>
+              <span>อัตราเล่นจบ (Completion)</span>
+            </div>
             <div class="text-h4 font-weight-bold text-primary">
               {{ analytics.completion_rate }}%
             </div>
@@ -44,7 +50,10 @@
 
         <v-col cols="12" sm="6" lg="3">
           <v-card class="pa-4 border-card rounded-xl">
-            <div class="text-caption text-grey font-weight-bold mb-1">⏱️ เวลาเล่นเฉลี่ย</div>
+            <div class="text-caption text-grey font-weight-bold mb-1 d-flex align-center">
+              <v-icon icon="mdi-clock-outline" color="indigo" size="16" class="mr-1"></v-icon>
+              <span>เวลาเล่นเฉลี่ย</span>
+            </div>
             <div class="text-h4 font-weight-bold text-slate-800">
               {{ formatDuration(analytics.average_duration_seconds) }}
             </div>
@@ -53,7 +62,10 @@
 
         <v-col cols="12" sm="6" lg="3">
           <v-card class="pa-4 border-card rounded-xl">
-            <div class="text-caption text-grey font-weight-bold mb-1">👥 จำนวนผู้เรียนที่เล่น</div>
+            <div class="text-caption text-grey font-weight-bold mb-1 d-flex align-center">
+              <v-icon icon="mdi-account-group" color="success" size="16" class="mr-1"></v-icon>
+              <span>จำนวนผู้เรียนที่เล่น</span>
+            </div>
             <div class="text-h4 font-weight-bold text-slate-800">
               {{ analytics.total_players }} <span class="text-caption text-grey">คน ({{ analytics.total_plays }} ครั้ง)</span>
             </div>
@@ -108,7 +120,7 @@
               <v-avatar size="28" class="ai-gradient-bg mr-2">
                 <v-icon icon="mdi-creation" color="white" size="16"></v-icon>
               </v-avatar>
-              <span>✨ AI Improvement Recommendations</span>
+              <span>AI Improvement Recommendations</span>
             </div>
 
             <div v-if="analytics.ai_improvements && analytics.ai_improvements.length > 0">

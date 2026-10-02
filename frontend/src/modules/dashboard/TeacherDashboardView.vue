@@ -6,7 +6,7 @@
         <v-col cols="12" md="8">
           <div class="d-flex align-center mb-2">
             <span class="text-h5 font-weight-bold text-slate-800">
-              สวัสดี, {{ authStore.user?.name }} 👋
+              สวัสดี, {{ authStore.user?.name }}
             </span>
           </div>
           <p class="text-body-1 text-grey-darken-1 mb-4">
@@ -28,7 +28,7 @@
               prepend-icon="mdi-creation"
               rounded="lg"
             >
-              ✨ สร้างเกมด้วย AI
+              สร้างเกมด้วย AI
             </v-btn>
             <v-btn
               variant="outlined"
@@ -52,7 +52,7 @@
       <v-col cols="12" sm="6" lg="3">
         <v-card class="pa-4 border-card rounded-xl">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="text-caption font-weight-bold text-grey">🎮 เกมทั้งหมด</span>
+            <span class="text-caption font-weight-bold text-grey">เกมทั้งหมด</span>
             <v-avatar size="36" color="indigo-lighten-5">
               <v-icon icon="mdi-gamepad-variant" color="primary" size="20"></v-icon>
             </v-avatar>
@@ -70,7 +70,7 @@
       <v-col cols="12" sm="6" lg="3">
         <v-card class="pa-4 border-card rounded-xl">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="text-caption font-weight-bold text-grey">👨‍🎓 นักเรียนในระบบ</span>
+            <span class="text-caption font-weight-bold text-grey">นักเรียนในระบบ</span>
             <v-avatar size="36" color="purple-lighten-5">
               <v-icon icon="mdi-account-group" color="secondary" size="20"></v-icon>
             </v-avatar>
@@ -87,7 +87,7 @@
       <v-col cols="12" sm="6" lg="3">
         <v-card class="pa-4 border-card rounded-xl">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="text-caption font-weight-bold text-grey">▶ ครั้งที่เข้าเล่น</span>
+            <span class="text-caption font-weight-bold text-grey">ครั้งที่เข้าเล่น</span>
             <v-avatar size="36" color="cyan-lighten-5">
               <v-icon icon="mdi-play-circle" color="accent" size="20"></v-icon>
             </v-avatar>
@@ -104,7 +104,7 @@
       <v-col cols="12" sm="6" lg="3">
         <v-card class="pa-4 border-card rounded-xl">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="text-caption font-weight-bold text-grey">⭐ คะแนนเฉลี่ย</span>
+            <span class="text-caption font-weight-bold text-grey">คะแนนเฉลี่ย</span>
             <v-avatar size="36" color="amber-lighten-5">
               <v-icon icon="mdi-trophy-outline" color="warning" size="20"></v-icon>
             </v-avatar>
@@ -124,8 +124,9 @@
       <v-col cols="12" lg="7">
         <v-card class="pa-5 border-card rounded-xl mb-6">
           <div class="d-flex justify-space-between align-center mb-4">
-            <div class="font-weight-bold text-subtitle-1 text-slate-800">
-              💡 Design Thinking Projects ล่าสุด
+            <div class="font-weight-bold text-subtitle-1 text-slate-800 d-flex align-center">
+              <v-icon icon="mdi-lightbulb-on-outline" color="primary" class="mr-2"></v-icon>
+              <span>Design Thinking Projects ล่าสุด</span>
             </div>
             <v-btn variant="text" size="small" color="primary" to="/projects">
               ดูทั้งหมด &rarr;
@@ -173,8 +174,9 @@
       <v-col cols="12" lg="5">
         <v-card class="pa-5 border-card rounded-xl mb-6">
           <div class="d-flex justify-space-between align-center mb-4">
-            <div class="font-weight-bold text-subtitle-1 text-slate-800">
-              🎮 เกมการเรียนรู้ (My Games)
+            <div class="font-weight-bold text-subtitle-1 text-slate-800 d-flex align-center">
+              <v-icon icon="mdi-gamepad-variant-outline" color="primary" class="mr-2"></v-icon>
+              <span>เกมการเรียนรู้ (My Games)</span>
             </div>
             <v-btn variant="text" size="small" color="primary" to="/games">
               ดูทั้งหมด &rarr;

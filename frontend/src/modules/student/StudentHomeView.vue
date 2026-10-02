@@ -4,8 +4,8 @@
     <v-card class="pa-8 border-card rounded-2xl mb-6 bg-white overflow-hidden">
       <v-row align="center">
         <v-col cols="12" md="8">
-          <h1 class="text-h4 font-weight-bold text-slate-800 mb-2">
-            สวัสดี, {{ authStore.user?.name }} 👋
+          <h1 class="text-h4 font-weight-bold text-slate-800 mb-2 d-flex align-center">
+            สวัสดี, {{ authStore.user?.name }}
           </h1>
           <p class="text-body-1 text-grey mb-6">
             พร้อมสำหรับภารกิจการเรียนรู้วันนี้หรือยัง? เล่นเกมเพื่อสะสมคะแนนและเหรียญรางวัล!

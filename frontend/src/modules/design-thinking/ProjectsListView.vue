@@ -44,7 +44,7 @@
             </p>
 
             <div class="text-caption text-grey mb-4">
-              📚 วิชา: {{ p.subject || '-' }} &bull; ระดับชั้น: {{ p.grade_level || '-' }}
+              วิชา: {{ p.subject || '-' }} &bull; ระดับชั้น: {{ p.grade_level || '-' }}
             </div>
           </div>
 

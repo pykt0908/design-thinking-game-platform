@@ -40,8 +40,8 @@
             </p>
 
             <div class="d-flex align-center gap-4 mb-4 text-caption text-grey">
-              <span>👨‍🎓 นักเรียน: <strong>{{ c.students?.length || 0 }}</strong> คน</span>
-              <span>🎮 เกมที่มอบหมาย: <strong>{{ c.assignments?.length || 0 }}</strong> เกม</span>
+              <span class="d-flex align-center"><v-icon icon="mdi-account-school" size="16" class="mr-1"></v-icon> นักเรียน: <strong class="ml-1">{{ c.students?.length || 0 }}</strong> คน</span>
+              <span class="d-flex align-center"><v-icon icon="mdi-gamepad-variant" size="16" class="mr-1"></v-icon> เกมที่มอบหมาย: <strong class="ml-1">{{ c.assignments?.length || 0 }}</strong> เกม</span>
             </div>
 
             <!-- Join Code Card per spec Section 7 & 26 -->
