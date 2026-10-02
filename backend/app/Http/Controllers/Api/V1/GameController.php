@@ -165,7 +165,23 @@ class GameController extends Controller
     {
         $game = Game::with(['currentVersion', 'teacher:id,name'])->where('public_id', $publicId)->firstOrFail();
 
-        if ($game->status !== 'published' && !request()->has('preview')) {
+        $user = auth('sanctum')->user();
+        $isTeacherOrAdmin = $user && ($user->id === $game->teacher_id || $user->isAdmin());
+        $isPreview = request()->boolean('preview') 
+            || request()->has('preview') 
+            || request()->query('preview') === 'true'
+            || request()->input('preview') === 'true';
+
+        // Also check if assigned to a classroom the student is a member of
+        $isAssignedStudent = false;
+        if ($user && $user->isStudent()) {
+            $isAssignedStudent = \App\Models\GameAssignment::where('game_id', $game->id)
+                ->whereHas('classroom.members', function ($q) use ($user) {
+                    $q->where('student_id', $user->id);
+                })->exists();
+        }
+
+        if ($game->status !== 'published' && !$isPreview && !$isTeacherOrAdmin && !$isAssignedStudent) {
             return response()->json(['message' => 'เกมนี้ยังไม่ได้เปิดให้เล่นสาธารณะ (Unpublished)'], 403);
         }
 

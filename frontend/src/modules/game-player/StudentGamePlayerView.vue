@@ -394,8 +394,11 @@ async function confirmExit() {
 
 onMounted(async () => {
   const publicId = route.params.publicId as string
+  const isPreview = route.query.preview !== undefined ? String(route.query.preview) : 'true'
   try {
-    const { data } = await apiClient.get(`/public/games/${publicId}`)
+    const { data } = await apiClient.get(`/public/games/${publicId}`, {
+      params: { preview: isPreview }
+    })
     schema.value = data.schema
     timeRemaining.value = data.schema?.settings?.duration || 300
 

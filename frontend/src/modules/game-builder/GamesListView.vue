@@ -77,7 +77,7 @@
           <!-- Card Actions Footer -->
           <div class="px-3 pb-3 pt-1 d-flex justify-space-between align-center border-t gap-2">
             <v-btn
-              :to="`/play/${g.public_id}`"
+              :to="`/play/${g.public_id}?preview=true`"
               target="_blank"
               variant="outlined"
               color="success"
@@ -86,7 +86,7 @@
               class="flex-1-1 px-1 font-weight-bold text-caption"
               prepend-icon="mdi-play"
             >
-              เล่น
+              ทดลองเล่น
             </v-btn>
 
             <v-btn
