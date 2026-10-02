@@ -575,7 +575,7 @@
             <v-card
               v-for="s in filteredStudents"
               :key="s.id"
-              class="pa-3 border rounded-xl d-flex justify-space-between align-center bg-white hover-card"
+              class="pa-3 border rounded-xl d-flex justify-space-between align-center bg-white"
             >
               <div class="d-flex align-center">
                 <v-avatar size="40" color="purple-lighten-4" class="mr-3 text-primary font-weight-bold">
@@ -979,14 +979,8 @@ onMounted(loadData)
 
 /* Classroom Card & Cover */
 .classroom-card {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
   background-color: #ffffff;
   border-color: #edd4f8 !important;
-}
-
-.classroom-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 28px -6px rgba(61, 0, 102, 0.15), 0 4px 12px -2px rgba(198, 112, 255, 0.2) !important;
 }
 
 .classroom-cover {
