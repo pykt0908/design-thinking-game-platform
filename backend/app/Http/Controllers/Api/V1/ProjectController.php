@@ -1,0 +1,195 @@
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use App\Models\DesignDefine;
+use App\Models\DesignEmpathize;
+use App\Models\DesignIdeate;
+use App\Models\DesignProject;
+use App\Models\DesignPrototype;
+use App\Models\DesignTest;
+use App\Models\Game;
+use App\Models\GameVersion;
+use App\Services\AI\AIService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class ProjectController extends Controller
+{
+    public function __construct(protected AIService $aiService) {}
+
+    public function index(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $query = DesignProject::with(['empathize', 'define', 'ideate', 'prototype', 'test']);
+
+        if (!$user->isAdmin()) {
+            $query->where('teacher_id', $user->id);
+        }
+
+        $projects = $query->orderBy('updated_at', 'desc')->paginate(15);
+        return response()->json($projects);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'subject' => 'nullable|string|max:255',
+            'grade_level' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $project = DesignProject::create([
+            'teacher_id' => $request->user()->id,
+            'title' => $request->title,
+            'subject' => $request->subject,
+            'grade_level' => $request->grade_level,
+            'description' => $request->description,
+            'current_step' => 1,
+            'status' => 'in_progress',
+        ]);
+
+        // Initialize 5 steps
+        DesignEmpathize::create(['project_id' => $project->id, 'grade_level' => $request->grade_level, 'subject' => $request->subject]);
+        DesignDefine::create(['project_id' => $project->id]);
+        DesignIdeate::create(['project_id' => $project->id]);
+        DesignPrototype::create(['project_id' => $project->id]);
+        DesignTest::create(['project_id' => $project->id]);
+
+        $project->load(['empathize', 'define', 'ideate', 'prototype', 'test']);
+        return response()->json($project, 201);
+    }
+
+    public function show(Request $request, int $id): JsonResponse
+    {
+        $project = DesignProject::with(['empathize', 'define', 'ideate', 'prototype', 'test', 'games'])
+            ->findOrFail($id);
+
+        if (!$request->user()->isAdmin() && $project->teacher_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        return response()->json($project);
+    }
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $project = DesignProject::findOrFail($id);
+        if (!$request->user()->isAdmin() && $project->teacher_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $project->update($request->only(['title', 'description', 'subject', 'grade_level', 'current_step', 'status']));
+        return response()->json($project);
+    }
+
+    /**
+     * Auto-save a specific Design Thinking step (spec Section 39: Debounce auto-save)
+     */
+    public function updateStep(Request $request, int $id, string $step): JsonResponse
+    {
+        $project = DesignProject::findOrFail($id);
+        if (!$request->user()->isAdmin() && $project->teacher_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $stepData = $request->input('data', []);
+
+        switch ($step) {
+            case 'empathize':
+                $record = DesignEmpathize::updateOrCreate(['project_id' => $project->id], $stepData);
+                break;
+            case 'define':
+                $record = DesignDefine::updateOrCreate(['project_id' => $project->id], $stepData);
+                break;
+            case 'ideate':
+                $record = DesignIdeate::updateOrCreate(['project_id' => $project->id], $stepData);
+                break;
+            case 'prototype':
+                $record = DesignPrototype::updateOrCreate(['project_id' => $project->id], $stepData);
+                break;
+            case 'test':
+                $record = DesignTest::updateOrCreate(['project_id' => $project->id], $stepData);
+                break;
+            default:
+                return response()->json(['message' => 'Invalid step name'], 422);
+        }
+
+        $project->touch();
+
+        return response()->json([
+            'message' => 'บันทึกสำเร็จ (Saved)',
+            'step' => $step,
+            'data' => $record,
+            'updated_at' => now()->toIso8601String(),
+        ]);
+    }
+
+    /**
+     * AI Contextual Assistant for current step
+     */
+    public function aiAssist(Request $request, int $id): JsonResponse
+    {
+        $project = DesignProject::with(['empathize', 'define', 'ideate', 'prototype', 'test'])->findOrFail($id);
+        $step = $request->input('step', 'empathize');
+
+        $suggestion = $this->aiService->getStepSuggestion($project, $step, $request->all());
+        return response()->json($suggestion);
+    }
+
+    /**
+     * AI Game Generation pipeline (spec Section 14)
+     */
+    public function generateGame(Request $request, int $id): JsonResponse
+    {
+        $project = DesignProject::with(['empathize', 'define', 'ideate', 'prototype'])->findOrFail($id);
+        if (!$request->user()->isAdmin() && $project->teacher_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Generate schema through AI Service
+        $gameSchema = $this->aiService->generateGameSchema($project);
+
+        $game = Game::create([
+            'teacher_id' => $request->user()->id,
+            'project_id' => $project->id,
+            'public_id' => Game::generateUniquePublicId(),
+            'title' => $gameSchema['title'] ?? $project->title,
+            'description' => $gameSchema['description'] ?? $project->description,
+            'theme' => $gameSchema['theme'] ?? 'school',
+            'genre' => $gameSchema['genre'] ?? 'Scenario & Quiz',
+            'cover_image' => 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&auto=format&fit=crop&q=80',
+            'status' => 'draft',
+            'settings' => $gameSchema['settings'] ?? [],
+        ]);
+
+        $version = GameVersion::create([
+            'game_id' => $game->id,
+            'version_number' => '1.0',
+            'schema_data' => json_encode($gameSchema, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT),
+            'changelog' => 'Generated by AI Game Studio from Design Thinking Project',
+            'is_published' => false,
+        ]);
+
+        $game->update(['current_version_id' => $version->id]);
+        $project->update(['status' => 'generated']);
+
+        return response()->json([
+            'message' => 'สร้างเกมการเรียนรู้สำเร็จ!',
+            'game' => $game->load('currentVersion'),
+        ], 201);
+    }
+
+    public function destroy(Request $request, int $id): JsonResponse
+    {
+        $project = DesignProject::findOrFail($id);
+        if (!$request->user()->isAdmin() && $project->teacher_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $project->delete();
+        return response()->json(['message' => 'ลบโปรเจกต์สำเร็จ']);
+    }
+}
