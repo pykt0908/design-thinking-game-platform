@@ -18,12 +18,21 @@
 
         <v-menu location="bottom end">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon variant="text">
-              <v-avatar size="36" color="primary-lighten">
-                <span class="text-subtitle-2 font-weight-bold text-primary">
-                  {{ authStore.user?.name?.charAt(0) || 'U' }}
+            <v-btn
+              v-bind="props"
+              variant="text"
+              rounded="pill"
+              class="px-3 py-1 border d-flex align-center bg-purple-lighten-5"
+            >
+              <v-avatar size="28" color="primary" class="mr-2 text-white">
+                <span class="text-caption font-weight-bold">
+                  {{ authStore.user?.name?.charAt(0) || 'ค' }}
                 </span>
               </v-avatar>
+              <span class="font-weight-bold text-body-2 text-slate-800 mr-1 text-truncate" style="max-width: 180px;">
+                {{ authStore.user?.name || 'คุณครู' }}
+              </span>
+              <v-icon icon="mdi-chevron-down" size="18" color="grey-darken-1"></v-icon>
             </v-btn>
           </template>
 
