@@ -16,7 +16,7 @@ class ClassroomController extends Controller
         $user = $request->user();
 
         if ($user->isStudent()) {
-            $classrooms = $user->belongsToMany(Classroom::class, 'classroom_students', 'student_id', 'classroom_id')
+            $classrooms = $user->enrolledClassrooms()
                 ->with(['teacher:id,name', 'assignments.game'])
                 ->get();
             return response()->json($classrooms);
@@ -79,7 +79,7 @@ class ClassroomController extends Controller
         }
 
         $student = $request->user();
-        if ($classroom->students()->where('student_id', $student->id)->exists()) {
+        if ($classroom->students()->where('classroom_students.student_id', $student->id)->exists()) {
             return response()->json([
                 'message' => 'คุณอยู่ในห้องเรียนนี้เรียบร้อยแล้ว',
                 'classroom' => $classroom,
