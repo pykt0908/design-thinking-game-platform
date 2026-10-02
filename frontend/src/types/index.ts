@@ -170,6 +170,7 @@ export interface GameSchema {
   title: string
   description?: string
   theme: string
+  mode?: string
   genre?: string
   settings: {
     duration: number

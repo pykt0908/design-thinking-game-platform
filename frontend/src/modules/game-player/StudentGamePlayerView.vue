@@ -306,7 +306,206 @@
               </div>
             </div>
 
-            <!-- Standard Quiz Question Element (Non-RPG) -->
+            <!-- Kahoot / Live Speed Quiz Mode -->
+            <div v-else-if="el.type === 'question' && isKahootMode" class="kahoot-arena w-100 max-w-2xl animate-fade-in">
+              <div class="kahoot-header d-flex justify-space-between align-center mb-4 px-4 py-3 rounded-2xl">
+                <div class="d-flex align-center gap-2">
+                  <span class="kahoot-live-badge">🔥 LIVE SPEED ARENA</span>
+                  <span class="text-caption text-grey-lighten-1 font-weight-bold">ข้อ {{ currentSceneIndex }} / {{ schema?.scenes ? schema.scenes.length - 1 : 3 }}</span>
+                </div>
+                <div class="d-flex align-center gap-3">
+                  <span class="text-caption text-amber-accent-2 font-weight-bold">⚡ SPEED BONUS</span>
+                  <div class="kahoot-timer-pill px-3 py-1 rounded-pill">
+                    ⏱️ {{ formatTime(timeRemaining) }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Question Billboard -->
+              <div class="kahoot-question-billboard pa-6 rounded-2xl mb-4 text-center">
+                <h2 class="text-h5 font-weight-black text-slate-900 mb-2">
+                  {{ el.question }}
+                </h2>
+                <div v-if="el.image" class="mt-3 text-center">
+                  <img :src="el.image" class="rounded-xl elevation-2" style="max-height: 180px; max-width: 100%; object-fit: cover;" />
+                </div>
+              </div>
+
+              <!-- 4 Vibrant Color Blocks -->
+              <div class="kahoot-grid mb-4">
+                <button
+                  v-for="(opt, idx) in el.options"
+                  :key="opt.id"
+                  class="kahoot-block-btn pa-5 rounded-2xl text-left d-flex align-center justify-space-between transition-all"
+                  :class="['kahoot-color-' + (idx % 4), getKahootOptionClasses(opt, el.id)]"
+                  :disabled="answeredQuestions[el.id] !== undefined"
+                  @click="selectOption(el, opt)"
+                >
+                  <div class="d-flex align-center gap-3">
+                    <span class="kahoot-shape-icon">{{ ['▲', '◆', '●', '■'][idx % 4] }}</span>
+                    <span class="text-subtitle-1 font-weight-bold text-white">{{ opt.text }}</span>
+                  </div>
+                  <v-icon
+                    v-if="answeredQuestions[el.id] !== undefined && opt.isCorrect"
+                    icon="mdi-check-circle"
+                    color="white"
+                    size="28"
+                  ></v-icon>
+                  <v-icon
+                    v-else-if="selectedAnswers[el.id] === opt.id && !opt.isCorrect"
+                    icon="mdi-close-circle"
+                    color="white"
+                    size="28"
+                  ></v-icon>
+                </button>
+              </div>
+
+              <!-- Immediate Feedback -->
+              <div v-if="answeredQuestions[el.id]" class="feedback-card pa-4 rounded-xl mt-3 animate-fade-in" :class="answeredQuestions[el.id].is_correct ? 'bg-green-lighten-5 text-success' : 'bg-amber-lighten-5 text-warning'">
+                <div class="d-flex align-center font-weight-bold mb-1">
+                  <v-icon :icon="answeredQuestions[el.id].is_correct ? 'mdi-check-circle' : 'mdi-alert-circle'" class="mr-2"></v-icon>
+                  <span>{{ answeredQuestions[el.id].is_correct ? 'ตอบได้รวดเร็วและถูกต้อง! (+ ' + (el.points || 30) + ' แต้ม)' : 'คำใบ้เพื่อการเรียนรู้:' }}</span>
+                </div>
+                <div class="text-caption text-slate-700">
+                  {{ answeredQuestions[el.id].explanation || el.explanation || 'เตรียมพร้อมสำหรับข้อต่อไป!' }}
+                </div>
+                <div class="d-flex justify-end mt-3">
+                  <v-btn color="primary" rounded="lg" size="default" class="font-weight-bold px-6" @click="goToNextScene(el.nextScene)">
+                    ข้อต่อไป &rarr;
+                  </v-btn>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detective & Mystery Quest Mode -->
+            <div v-else-if="el.type === 'question' && isDetectiveMode" class="detective-dossier w-100 max-w-2xl animate-fade-in">
+              <div class="dossier-folder-tab d-flex justify-space-between align-center px-5 py-3 rounded-t-2xl">
+                <div class="d-flex align-center gap-2">
+                  <v-icon icon="mdi-incognito" color="amber-darken-4" size="22"></v-icon>
+                  <span class="font-weight-black text-subtitle-2 text-slate-900">CONFIDENTIAL CASE FILE #{{ currentSceneIndex + 1 }}</span>
+                </div>
+                <span class="classified-stamp">TOP SECRET</span>
+              </div>
+
+              <div class="dossier-body pa-6 rounded-b-2xl elevation-3 mb-4">
+                <div class="d-flex align-center gap-2 text-caption text-brown-darken-2 font-weight-bold mb-2">
+                  <v-icon icon="mdi-magnify" size="18"></v-icon>
+                  <span>แฟ้มสืบสวนและวิเคราะห์เบาะแส</span>
+                </div>
+                <h2 class="text-h6 font-weight-bold text-slate-900 mb-4 line-height-relaxed">
+                  {{ el.question }}
+                </h2>
+                <div v-if="el.image" class="mb-4 text-center">
+                  <img :src="el.image" class="rounded-lg border elevation-2" style="max-height: 180px; max-width: 100%; object-fit: cover;" />
+                </div>
+
+                <div class="evidence-grid d-flex flex-column gap-3 mb-4">
+                  <button
+                    v-for="(opt, idx) in el.options"
+                    :key="opt.id"
+                    class="evidence-card pa-4 rounded-xl text-left border transition-all d-flex justify-space-between align-center"
+                    :class="getOptionClasses(opt)"
+                    :disabled="answeredQuestions[el.id] !== undefined"
+                    @click="selectOption(el, opt)"
+                  >
+                    <div class="d-flex align-center gap-3">
+                      <span class="evidence-tag">เบาะแส #{{ idx + 1 }}</span>
+                      <span class="text-body-2 font-weight-medium text-slate-900">{{ opt.text }}</span>
+                    </div>
+                    <v-icon
+                      v-if="answeredQuestions[el.id] !== undefined && opt.isCorrect"
+                      icon="mdi-check-decagram"
+                      color="success"
+                      size="22"
+                    ></v-icon>
+                    <v-icon
+                      v-else-if="selectedAnswers[el.id] === opt.id && !opt.isCorrect"
+                      icon="mdi-close-octagon"
+                      color="error"
+                      size="22"
+                    ></v-icon>
+                  </button>
+                </div>
+
+                <div v-if="answeredQuestions[el.id]" class="feedback-card pa-4 rounded-xl mt-3 animate-fade-in" :class="answeredQuestions[el.id].is_correct ? 'bg-green-lighten-5 text-success' : 'bg-amber-lighten-5 text-warning'">
+                  <div class="d-flex align-center font-weight-bold mb-1">
+                    <v-icon :icon="answeredQuestions[el.id].is_correct ? 'mdi-check-circle' : 'mdi-alert-circle'" class="mr-2"></v-icon>
+                    <span>{{ answeredQuestions[el.id].is_correct ? 'ไขปริศนาสำเร็จ! เบาะแสถูกต้อง (+ ' + (el.points || 30) + ' แต้ม)' : 'เบาะแสยังไม่สอดคล้องกับพยานหลักฐาน:' }}</span>
+                  </div>
+                  <div class="text-caption text-slate-700">
+                    {{ answeredQuestions[el.id].explanation || el.explanation || 'พิจารณาข้อเท็จจริงอีกครั้ง!' }}
+                  </div>
+                  <div class="d-flex justify-end mt-3">
+                    <v-btn color="brown-darken-3" rounded="lg" size="small" class="font-weight-bold text-white px-5" @click="goToNextScene(el.nextScene)">
+                      สืบสวนด่านถัดไป &rarr;
+                    </v-btn>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Visual Novel Mode -->
+            <div v-else-if="el.type === 'question' && isVisualNovelMode" class="vn-theater w-100 max-w-2xl animate-fade-in">
+              <div class="vn-dialogue-panel pa-6 rounded-2xl mb-4 elevation-4">
+                <div class="d-flex align-center gap-3 mb-3">
+                  <v-avatar size="48" class="elevation-2 bg-indigo-lighten-4">
+                    <v-icon icon="mdi-account-voice" color="indigo" size="28"></v-icon>
+                  </v-avatar>
+                  <div>
+                    <div class="vn-speaker-tag px-3 py-1 rounded-pill">บทสนทนาสถานการณ์</div>
+                    <div class="text-caption text-grey-lighten-1">ทางแยกการตัดสินใจ (Story Branch)</div>
+                  </div>
+                </div>
+
+                <div class="vn-narrative-text text-body-1 font-weight-medium text-white mb-4 line-height-relaxed">
+                  {{ el.question }}
+                </div>
+
+                <div v-if="el.image" class="mb-4 text-center">
+                  <img :src="el.image" class="rounded-xl border" style="max-height: 180px; max-width: 100%; object-fit: cover;" />
+                </div>
+
+                <div class="vn-choices-container d-flex flex-column gap-3 mb-4">
+                  <button
+                    v-for="(opt, idx) in el.options"
+                    :key="opt.id"
+                    class="vn-choice-btn pa-4 rounded-xl text-left transition-all d-flex justify-space-between align-center"
+                    :class="getOptionClasses(opt)"
+                    :disabled="answeredQuestions[el.id] !== undefined"
+                    @click="selectOption(el, opt)"
+                  >
+                    <span class="text-body-2 font-weight-medium text-white">📖 ทางเลือกที่ {{ idx + 1 }}: {{ opt.text }}</span>
+                    <v-icon
+                      v-if="answeredQuestions[el.id] !== undefined && opt.isCorrect"
+                      icon="mdi-check-circle"
+                      color="success"
+                    ></v-icon>
+                    <v-icon
+                      v-else-if="selectedAnswers[el.id] === opt.id && !opt.isCorrect"
+                      icon="mdi-close-circle"
+                      color="error"
+                    ></v-icon>
+                  </button>
+                </div>
+
+                <div v-if="answeredQuestions[el.id]" class="feedback-card pa-4 rounded-xl mt-3 animate-fade-in" :class="answeredQuestions[el.id].is_correct ? 'bg-green-lighten-5 text-success' : 'bg-amber-lighten-5 text-warning'">
+                  <div class="d-flex align-center font-weight-bold mb-1">
+                    <v-icon :icon="answeredQuestions[el.id].is_correct ? 'mdi-check-circle' : 'mdi-alert-circle'" class="mr-2"></v-icon>
+                    <span>{{ answeredQuestions[el.id].is_correct ? 'บทสนทนาดำเนินไปอย่างยอดเยี่ยม! (+ ' + (el.points || 25) + ' แต้ม)' : 'ผลลัพธ์ของทางเลือกนี้:' }}</span>
+                  </div>
+                  <div class="text-caption text-slate-700">
+                    {{ answeredQuestions[el.id].explanation || el.explanation || 'ดำเนินเรื่องราวต่อสู่ฉากถัดไป' }}
+                  </div>
+                  <div class="d-flex justify-end mt-3">
+                    <v-btn color="indigo" rounded="lg" size="small" class="font-weight-bold text-white px-5" @click="goToNextScene(el.nextScene)">
+                      ดำเนินเนื้อเรื่องต่อ &rarr;
+                    </v-btn>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Standard Quiz Question Element (Non-RPG / Fallback) -->
             <div v-else-if="el.type === 'question'" class="quiz-box w-100 pa-6 rounded-2xl bg-white elevation-3 border-card">
               <div class="d-flex justify-space-between align-center mb-3">
                 <v-chip size="small" color="primary" variant="flat" class="font-weight-medium">
@@ -424,11 +623,33 @@ const isHeroHit = ref(false)
 const combatText = ref('')
 const combatEffectType = ref<'hero_crit' | 'boss_crit' | 'normal' | ''>('')
 
-const isRpgMode = computed(() => {
-  if (!schema.value) return false
+const currentGameGenre = computed<'rpg' | 'kahoot' | 'detective' | 'visual_novel' | 'quiz'>(() => {
+  if (!schema.value) return 'quiz'
   const g = (schema.value.genre || '').toLowerCase()
-  return g === 'rpg_quest' || g.includes('rpg') || schema.value.settings?.turnBasedCombat === true
+  if (g === 'rpg_quest' || g.includes('rpg') || schema.value.settings?.turnBasedCombat === true) return 'rpg'
+  if (g === 'live_quiz' || g.includes('live') || g.includes('kahoot') || schema.value.mode === 'multiplayer_live' || schema.value.settings?.isLiveRoom === true || g.includes('team') || g.includes('royale') || g.includes('board')) return 'kahoot'
+  if (g === 'scenario_detective' || g.includes('detective') || g.includes('mystery')) return 'detective'
+  if (g === 'visual_novel' || g.includes('novel')) return 'visual_novel'
+  return 'quiz'
 })
+
+const isRpgMode = computed(() => currentGameGenre.value === 'rpg')
+const isKahootMode = computed(() => currentGameGenre.value === 'kahoot')
+const isDetectiveMode = computed(() => currentGameGenre.value === 'detective')
+const isVisualNovelMode = computed(() => currentGameGenre.value === 'visual_novel')
+
+function getKahootOptionClasses(opt: GameOption, questionId: string) {
+  if (answeredQuestions.value[questionId] === undefined) {
+    return 'kahoot-block-idle'
+  }
+  if (opt.isCorrect) {
+    return 'kahoot-block-correct'
+  }
+  if (selectedAnswers.value[questionId] === opt.id) {
+    return 'kahoot-block-wrong'
+  }
+  return 'kahoot-block-faded'
+}
 
 function getBossName(sceneIdx: number) {
   const bosses = [
@@ -957,5 +1178,135 @@ onUnmounted(() => {
   background: rgba(120, 53, 15, 0.85);
   border: 1px solid #f59e0b;
   box-shadow: 0 10px 25px rgba(245, 158, 11, 0.25);
+}
+
+/* Kahoot Arena Styles */
+.kahoot-header {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  backdrop-filter: blur(10px);
+}
+.kahoot-live-badge {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.5px;
+}
+.kahoot-timer-pill {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  font-weight: 800;
+  font-size: 12px;
+}
+.kahoot-question-billboard {
+  background: white;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+.kahoot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (max-width: 600px) {
+  .kahoot-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.kahoot-block-btn {
+  border: none;
+  cursor: pointer;
+  min-height: 80px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.kahoot-block-idle:hover {
+  transform: translateY(-3px) scale(1.02);
+  filter: brightness(1.1);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+}
+.kahoot-color-0 { background: #e21b3c !important; }
+.kahoot-color-1 { background: #1368ce !important; }
+.kahoot-color-2 { background: #d89e00 !important; }
+.kahoot-color-3 { background: #26890c !important; }
+.kahoot-shape-icon {
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.9);
+}
+.kahoot-block-faded {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.kahoot-block-correct {
+  box-shadow: 0 0 25px #10b981 !important;
+  border: 3px solid #fff !important;
+}
+.kahoot-block-wrong {
+  opacity: 0.5;
+}
+
+/* Detective Dossier Styles */
+.dossier-folder-tab {
+  background: #d97706;
+  border-bottom: 2px solid #b45309;
+}
+.classified-stamp {
+  background: #dc2626;
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transform: rotate(3deg);
+}
+.dossier-body {
+  background: #fffbeb;
+  border: 2px solid #fde68a;
+  border-top: none;
+}
+.evidence-card {
+  background: white;
+  cursor: pointer;
+  border: 1.5px solid #e5e7eb;
+}
+.evidence-card:hover {
+  background: #fef3c7;
+  border-color: #d97706;
+}
+.evidence-tag {
+  background: #f3f4f6;
+  color: #4b5563;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* Visual Novel Styles */
+.vn-dialogue-panel {
+  background: linear-gradient(180deg, rgba(30, 27, 75, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1.5px solid rgba(129, 140, 248, 0.4);
+  backdrop-filter: blur(16px);
+}
+.vn-speaker-tag {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-block;
+}
+.vn-choice-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+}
+.vn-choice-btn:hover {
+  background: rgba(99, 102, 241, 0.3);
+  border-color: #818cf8;
 }
 </style>
